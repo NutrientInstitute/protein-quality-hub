@@ -11,6 +11,8 @@ library(openxlsx)
 # Protein_Digestibility_Data <- read_csv("https://raw.githubusercontent.com/NutrientInstitute/protein-quality-hub/main/Protein%20Digestibility%20Data%20%20-%20full%20data.csv") %>%
 Protein_Digestibility_Data <-
     read_csv("Protein Digestibility Data  - full data.csv") %>%
+    mutate(`Protein Form` = ifelse(`Protein Form` == "cystine", "cysteine", `Protein Form`)) %>%
+    mutate(`Protein Form` = ifelse(`Protein Form` == "arganine", "arginine", `Protein Form`)) %>%
     select(!Notes) %>%
     select(!Diet) %>%
     select(!`Food group`) %>%
@@ -188,10 +190,10 @@ ui <- fluidPage(
                             "In the",
                             tags$em(" Protein Quality Scoring"),
                             " tab of the ",
-                            tags$em("Protein Digestibility Hub"),
+                            tags$em("Protein Quality Hub"),
                             "you will find protein quality scores generated using digestibility values from the ",
-                            tags$em("Protein Digestibility Data"),
-                            " tab. Digestibility values can be identified across tables using the variable ",
+                            tags$em("Bioavailability Data"),
+                            " tab. Bioavailability values can be identified across tables using the variable ",
                             tags$em("NI_ID"),
                             ".",
                             br(),
@@ -202,23 +204,9 @@ ui <- fluidPage(
                             "to report problems or provide feedback."
                         ),
                         br(),
-
-                        h4("EAA-9:", tags$sup("1")),
-                        p(
-                            "Intended application: EAA-9 scores are percentages, representing the ability of a food to meet daily essential amino acid (EAA) recommendations, by default the RDAs. In practice, the score can be used to compare protein quality between food sources, and as a dietary quality tool to track progress toward meeting EAA recommendations."
-                        ),
-                        p(br(), style = "margin-bottom: -15px;"),
-                        # " Calculation is based on the minimum percentage of the RDA met per serving(s) of food, where the minimum is the lowest percentage met by a single amino acid.",
-                        p(
-                            "The EAA-9 calculation is based on the minimum percentage of the RDA (or personalized EAA recommendations) met per serving(s) of food, where the minimum is the lowest percentage met by a single amino acid adjusted for digestibility (if digestibility data is available). EAA RDAs are satisfied when the EAA-9 score for foods consumed in a day reaches 100%."
-                        ),
-                        p(br(), style = "margin-bottom: -15px;"),
-                        '\\(\\text{EAA-9}=min(\\frac{\\text{His Present}}{\\text{His RDA}},\\frac{\\text{Ile Present}}{\\text{Ile RDA}},\\frac{\\text{Leu Present}}{\\text{Leu RDA}},\\frac{\\text{Lys Present}}{\\text{Lys RDA}},\\frac{\\text{Met Present}}{\\text{Met RDA}},\\frac{\\text{Phe Present}}{\\text{Phe RDA}},\\frac{\\text{Thr Present}}{\\text{Thr RDA}},\\frac{\\text{Trp Present}}{\\text{Trp RDA}},\\frac{\\text{Val Present}}{\\text{Val RDA}})\\times100\\times\\text{digestibility}\\)',
-                        br(),
-                        p(br()),
                         h4(
                             "Protein Digestibility Corrected Amino Acid Score (PDCAAS):",
-                            tags$sup("2")
+                            tags$sup("1")
                         ),
                         p(
                             "Intended application: PDCAAS values range from 0 to 1 and represent the quality of 1 gram of protein from a food source compared to a reference gram of protein. In practice, the score can be used to compare the protein quality between food sources on a per gram basis."
@@ -233,7 +221,7 @@ ui <- fluidPage(
                         p(br()),
                         h4(
                             "Digestible Indispensable Amino Acid Score (DIAAS):",
-                            tags$sup("3")
+                            tags$sup("2")
                         ),
                         p(
                             "Intended application: DIAAS values represent the ratio between the quality of 1 gram of protein from a food source compared to a reference gram of protein. In practice, the score can be used to compare the protein quality between food sources on a per gram basis."
@@ -246,18 +234,26 @@ ui <- fluidPage(
                         '\\(\\text{DIAAS}=100\\times\\frac{\\text{mg of digestible dietary indispensable amino acid in 1 g of the dietary protein}}{\\text{mg of the same dietary indispensable amino acid in 1g of the reference protein}}\\times\\text{digestibility}\\)',
                         p(br()),
                         p(
-                            "*While specific digestibility samples (i.e. ileal, fecal) are preferred in the calculation of PDCAAS and DIAAS, protein quality scores are provided for all available digestibility values."
+                            "*While specific digestibility samples (i.e. ileal, fecal) are preferred in the calculation of PDCAAS and DIAAS, protein quality scores are provided for all available bioavailability values."
                         ),
+                        p(br()),
+                        h4("EAA-9:", tags$sup("3")),
+                        p(
+                          "Intended application: EAA-9 scores are percentages, representing the ability of a food to meet daily essential amino acid (EAA) recommendations, by default the RDAs. In practice, the score can be used to compare protein quality between food sources, and as a dietary quality tool to track progress toward meeting EAA recommendations."
+                        ),
+                        p(br(), style = "margin-bottom: -15px;"),
+                        # " Calculation is based on the minimum percentage of the RDA met per serving(s) of food, where the minimum is the lowest percentage met by a single amino acid.",
+                        p(
+                          "The EAA-9 calculation is based on the minimum percentage of the RDA (or personalized EAA recommendations) met per serving(s) of food, where the minimum is the lowest percentage met by a single amino acid adjusted for bioavailability (if bioavailability data is available). EAA RDAs are satisfied when the EAA-9 score for foods consumed in a day reaches 100%."
+                        ),
+                        p(br(), style = "margin-bottom: -15px;"),
+                        '\\(\\text{EAA-9}=min(\\frac{\\text{His Present}}{\\text{His RDA}},\\frac{\\text{Ile Present}}{\\text{Ile RDA}},\\frac{\\text{Leu Present}}{\\text{Leu RDA}},\\frac{\\text{Lys Present}}{\\text{Lys RDA}},\\frac{\\text{Met Present}}{\\text{Met RDA}},\\frac{\\text{Phe Present}}{\\text{Phe RDA}},\\frac{\\text{Thr Present}}{\\text{Thr RDA}},\\frac{\\text{Trp Present}}{\\text{Trp RDA}},\\frac{\\text{Val Present}}{\\text{Val RDA}})\\times100\\times\\text{bioavailability}\\)',
+                        br(),
+
 
                         br(),
                         tags$small(h5("References:"),
-                                   tags$ol(tags$li(
-                                       p(
-                                           "Forester SM, Jennings-Dobbs EM, Sathar SA, Layman DK. Perspective: Developing a Nutrient-Based Framework for Protein Quality. J Nutr. 2023 Aug;153(8):2137-2146. doi: ",
-                                           a(href = "10.1016/j.tjnut.2023.06.004", "https://doi.org/10.1016/j.tjnut.2023.06.004"),
-                                           ". Epub 2023 Jun 8. PMID: 37301285."
-                                       )
-                                   ),
+                                   tags$ol(
                                    tags$li(
                                        p(
                                            "Food and Agriculture Organization of the United Nations, World Health Organization & United Nations University. Protein and amino acid requirements in human nutrition : report of a joint FAO/WHO/UNU expert consultation [Internet]. World Health Organization; 2007 [cited 2022 Dec 1]. Available from: ",
@@ -274,6 +270,13 @@ ui <- fluidPage(
                                            ),
                                            "."
                                        )
+                                   ),
+                                   tags$li(
+                                     p(
+                                       "Forester SM, Jennings-Dobbs EM, Sathar SA, Layman DK. Perspective: Developing a Nutrient-Based Framework for Protein Quality. J Nutr. 2023 Aug;153(8):2137-2146. doi: ",
+                                       a(href = "10.1016/j.tjnut.2023.06.004", "https://doi.org/10.1016/j.tjnut.2023.06.004"),
+                                       ". Epub 2023 Jun 8. PMID: 37301285."
+                                     )
                                    )))
                     )
                 )),
@@ -315,130 +318,15 @@ ui <- fluidPage(
                             3,
                             checkboxGroupInput(
                                 inputId = "score",
-                                label = "Score",
-                                choices = c("EAA-9", "PDCAAS", "DIAAS"),
-                                selected = "EAA-9"
+                                label = "Score(s)",
+                                choices = c("PDCAAS", "DIAAS", "EAA-9"),
+                                selected = c("PDCAAS", "DIAAS", "EAA-9")
                             ),
                             radioButtons(
                                 inputId = "show_calc",
                                 label = "Score calculation",
                                 choiceNames = c("Show calculation and score", "Show score only"),
                                 choiceValues = c("show_calc", "score_only")
-                            )
-                        ),
-                        column(
-                            3,
-                            conditionalPanel(
-                                condition = "input.score.includes('EAA-9')",
-                                p("EAA-9 Scoring options:", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;"),
-                                fluidRow(
-                                    style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 15px;",
-                                    pickerInput(
-                                        inputId = "EAA_rec",
-                                        label = "EAA Recommendations",
-                                        choices = unique(c(
-                                            unlist(
-                                                scoring_pattern %>% filter(Unit == "mg/kg/d") %>% select(`Pattern Name`)
-                                            ),
-                                            "Choose custom recommendations"
-                                        )),
-                                        selected = "RDA for Adults"
-                                    ),
-                                    conditionalPanel(condition = "input.EAA_rec == 'Choose custom recommendations'",
-                                                     fluidRow(
-                                                         column(
-                                                             4,
-                                                             numericInput(
-                                                                 inputId = "his",
-                                                                 label = "His (mg/kg/d)",
-                                                                 value = "14",
-                                                                 width = '90px'
-                                                             ),
-                                                             numericInput(
-                                                                 inputId = "leu",
-                                                                 label = "Leu (mg/kg/d)",
-                                                                 value = "19",
-                                                                 width = '90px'
-                                                             ),
-                                                             numericInput(
-                                                                 inputId = "ile",
-                                                                 label = "Ile (mg/kg/d)",
-                                                                 value = "42",
-                                                                 width = '90px'
-                                                             )
-                                                         ),
-                                                         column(
-                                                             4,
-                                                             numericInput(
-                                                                 inputId = "lys",
-                                                                 label = "Lys (mg/kg/d)",
-                                                                 value = "38",
-                                                                 width = '90px'
-                                                             ),
-                                                             numericInput(
-                                                                 inputId = "met_cys",
-                                                                 label = "Met+Cys (mg/kg/d)",
-                                                                 value = "19",
-                                                                 width = '90px'
-                                                             ),
-                                                             numericInput(
-                                                                 inputId = "phe_tyr",
-                                                                 label = "Phe+Tyr (mg/kg/d)",
-                                                                 value = "33",
-                                                                 width = '90px'
-                                                             )
-                                                         ),
-                                                         column(
-                                                             4,
-                                                             numericInput(
-                                                                 inputId = "thr",
-                                                                 label = "Thr (mg/kg/d)",
-                                                                 value = "20",
-                                                                 width = '90px'
-                                                             ),
-                                                             numericInput(
-                                                                 inputId = "trp",
-                                                                 label = "Trp (mg/kg/d)",
-                                                                 value = "5",
-                                                                 width = '90px'
-                                                             ),
-                                                             numericInput(
-                                                                 inputId = "val",
-                                                                 label = "Val (mg/kg/d)",
-                                                                 value = "24",
-                                                                 width = '90px'
-                                                             )
-                                                         )
-                                                     )),
-                                    conditionalPanel(
-                                        condition = "input.EAA_rec!='Choose custom recommendations'",
-                                        pickerInput(
-                                            inputId = "rec_age",
-                                            label = "Age",
-                                            choices = unique(scoring_pattern$Age)
-                                        )
-                                    ),
-                                    numericInput(
-                                        inputId = "weight",
-                                        label = "Weight (kg)",
-                                        value = "70"
-                                    ),
-                                    radioButtons(
-                                        inputId = "serving_size",
-                                        label = "Serving size of food",
-                                        choices = c("Use standard serving sizes", "Choose your own serving"),
-                                        selected = "Use standard serving sizes"
-                                    ),
-                                    conditionalPanel(
-                                        condition = "input.serving_size == 'Choose your own serving'",
-                                        numericInput(
-                                            inputId = "serving_weight",
-                                            label = "Serving size (g)",
-                                            value = "100"
-                                        )
-                                    ),
-                                    checkboxInput(inputId = "require_bioavail", label = "require bioavailability for calculation", value = FALSE)
-                                )
                             )
                         ),
                         column(
@@ -488,6 +376,121 @@ ui <- fluidPage(
                                     br()
                                 )
                             )
+                        ),
+                        column(
+                          3,
+                          conditionalPanel(
+                            condition = "input.score.includes('EAA-9')",
+                            p("EAA-9 Scoring options:", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;"),
+                            fluidRow(
+                              style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 15px;",
+                              pickerInput(
+                                inputId = "EAA_rec",
+                                label = "EAA Recommendations",
+                                choices = unique(c(
+                                  unlist(
+                                    scoring_pattern %>% filter(Unit == "mg/kg/d") %>% select(`Pattern Name`)
+                                  ),
+                                  "Choose custom recommendations"
+                                )),
+                                selected = "RDA for Adults"
+                              ),
+                              conditionalPanel(condition = "input.EAA_rec == 'Choose custom recommendations'",
+                                               fluidRow(
+                                                 column(
+                                                   4,
+                                                   numericInput(
+                                                     inputId = "his",
+                                                     label = "His (mg/kg/d)",
+                                                     value = "14",
+                                                     width = '90px'
+                                                   ),
+                                                   numericInput(
+                                                     inputId = "leu",
+                                                     label = "Leu (mg/kg/d)",
+                                                     value = "19",
+                                                     width = '90px'
+                                                   ),
+                                                   numericInput(
+                                                     inputId = "ile",
+                                                     label = "Ile (mg/kg/d)",
+                                                     value = "42",
+                                                     width = '90px'
+                                                   )
+                                                 ),
+                                                 column(
+                                                   4,
+                                                   numericInput(
+                                                     inputId = "lys",
+                                                     label = "Lys (mg/kg/d)",
+                                                     value = "38",
+                                                     width = '90px'
+                                                   ),
+                                                   numericInput(
+                                                     inputId = "met_cys",
+                                                     label = "Met+Cys (mg/kg/d)",
+                                                     value = "19",
+                                                     width = '90px'
+                                                   ),
+                                                   numericInput(
+                                                     inputId = "phe_tyr",
+                                                     label = "Phe+Tyr (mg/kg/d)",
+                                                     value = "33",
+                                                     width = '90px'
+                                                   )
+                                                 ),
+                                                 column(
+                                                   4,
+                                                   numericInput(
+                                                     inputId = "thr",
+                                                     label = "Thr (mg/kg/d)",
+                                                     value = "20",
+                                                     width = '90px'
+                                                   ),
+                                                   numericInput(
+                                                     inputId = "trp",
+                                                     label = "Trp (mg/kg/d)",
+                                                     value = "5",
+                                                     width = '90px'
+                                                   ),
+                                                   numericInput(
+                                                     inputId = "val",
+                                                     label = "Val (mg/kg/d)",
+                                                     value = "24",
+                                                     width = '90px'
+                                                   )
+                                                 )
+                                               )),
+                              conditionalPanel(
+                                condition = "input.EAA_rec!='Choose custom recommendations'",
+                                pickerInput(
+                                  inputId = "rec_age",
+                                  label = "Age",
+                                  choices = unique(scoring_pattern$Age)
+                                )
+                              ),
+                              numericInput(
+                                inputId = "weight",
+                                label = "Weight (kg)",
+                                value = "70"
+                              ),
+                              radioButtons(
+                                inputId = "serving_size",
+                                label = "Serving size of food",
+                                choices = c("Use standard serving sizes", "Choose your own serving"),
+                                selected = "Use standard serving sizes"
+                              ),
+                              conditionalPanel(
+                                condition = "input.serving_size == 'Choose your own serving'",
+                                numericInput(
+                                  inputId = "serving_weight",
+                                  label = "Serving size (g)",
+                                  value = "100"
+                                )
+                              ),
+                              checkboxInput(inputId = "require_bioavail", label = "require bioavailability for calculation", value = FALSE)
+                            )
+                          )
                         )
                     ),
                     fluidRow(
@@ -495,17 +498,13 @@ ui <- fluidPage(
                         fluidRow(
                             style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 10px;",
                             column(
-                                2,
-                                checkboxGroupInput(
-                                    inputId = "pq_measure",
-                                    label = "Calculation",
-                                    choices = c(unique(
-                                        as.character(Protein_Digestibility_Data$Calculation)
-                                    )),
-                                    selected = c(unique(
-                                        as.character(Protein_Digestibility_Data$Calculation)
-                                    ))
-                                )
+                              2,
+                              checkboxGroupInput(
+                                inputId = "pq_species",
+                                label = "Species",
+                                choices = c("human", "human (predicted from pig)", "pig", "rat"),
+                                selected = c("human", "human (predicted from pig)", "pig", "rat")
+                              )
                             ),
                             column(
                                 2,
@@ -523,20 +522,24 @@ ui <- fluidPage(
                             column(
                                 2,
                                 checkboxGroupInput(
-                                    inputId = "pq_species",
-                                    label = "Species",
-                                    choices = c("human", "human (predicted from pig)", "pig", "rat"),
-                                    selected = c("human", "human (predicted from pig)", "pig", "rat")
-                                )
-                            ),
-                            column(
-                                2,
-                                checkboxGroupInput(
                                     inputId = "pq_analyte",
-                                    label = "Compound",
+                                    label = "Protein Form",
                                     choices = c("crude protein", "individual amino acids"),
                                     selected = c("crude protein", "individual amino acids")
                                 )
+                            ),
+                            column(
+                              2,
+                              checkboxGroupInput(
+                                inputId = "pq_measure",
+                                label = "Calculation",
+                                choices = c(unique(
+                                  as.character(Protein_Digestibility_Data$Calculation)
+                                )),
+                                selected = c(unique(
+                                  as.character(Protein_Digestibility_Data$Calculation)
+                                ))
+                              )
                             )
                         )
 
@@ -580,7 +583,7 @@ ui <- fluidPage(
                         style = "background-color: #F6F6F6;padding-left: 30px;padding-right: 20px; padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
                         p(
                             "The Protein Quality Hub Project serves as a dedicated repository for protein digestibility information, addressing a critical gap in accessible data. For more information see the Protein Quality Hub ",
-                            a(href = "https://github.com/NutrientInstitute/protein-digestibility", "github page."),
+                            a(href = "https://github.com/NutrientInstitute/protein-quality-hub", "github page."),
                             " Please contact ",
                             a(href = "https://www.nutrientinstitute.org/protein-digestibility-feedback", "Nutrient Institute"),
                             "to report problems or provide feedback."
@@ -749,7 +752,7 @@ ui <- fluidPage(
                         2,
                         textInput(
                             inputId = "analysisMethod_tab2",
-                            label = "Analysis method:",
+                            label = "Analysis method(s):",
                             width = '100%'
                         )
                     ),
@@ -757,7 +760,7 @@ ui <- fluidPage(
                         2,
                         textInput(
                             inputId = "source_tab2",
-                            label = "Sources:",
+                            label = "Data Source(s):",
                             width = '100%'
                         )
                     )
@@ -772,20 +775,32 @@ ui <- fluidPage(
                 fluidRow(
                     style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
                     column(
-                        2,
-                        virtualSelectInput(
-                            inputId = "measure",
-                            label = "Calculation:",
-                            choices = c(unique(
-                                as.character(Protein_Digestibility_Data$Calculation)
-                            )),
-                            selected = c(unique(
-                                as.character(Protein_Digestibility_Data$Calculation)
-                            )),
-                            multiple = TRUE,
-                            showValueAsTags = TRUE,
-                            width = '100%'
-                        )
+                      2,
+                      virtualSelectInput(
+                        inputId = "model",
+                        label = "Model:",
+                        choices = c("in vivo", "in vitro"),
+                        selected = c(unique(
+                          as.character(Protein_Digestibility_Data$Model)
+                        )),
+                        multiple = TRUE,
+                        showValueAsTags = TRUE,
+                        width = '100%'
+                      )
+                    ),
+                    column(
+                      2,
+                      virtualSelectInput(
+                        inputId = "species",
+                        label = "Species:",
+                        choices = c("human", "human (predicted from pig)", "pig", "rat"),
+                        selected = c(unique(
+                          as.character(Protein_Digestibility_Data$Species)
+                        )),
+                        multiple = TRUE,
+                        showValueAsTags = TRUE,
+                        width = '100%'
+                      )
                     ),
                     column(
                         2,
@@ -804,38 +819,10 @@ ui <- fluidPage(
                         )
                     ),
                     column(
-                        2,
-                        virtualSelectInput(
-                            inputId = "model",
-                            label = "Model:",
-                            choices = c("in vivo", "in vitro"),
-                            selected = c(unique(
-                                as.character(Protein_Digestibility_Data$Model)
-                            )),
-                            multiple = TRUE,
-                            showValueAsTags = TRUE,
-                            width = '100%'
-                        )
-                    ),
-                    column(
-                        2,
-                        virtualSelectInput(
-                            inputId = "species",
-                            label = "Species:",
-                            choices = c("human", "human (predicted from pig)", "pig", "rat"),
-                            selected = c(unique(
-                                as.character(Protein_Digestibility_Data$Species)
-                            )),
-                            multiple = TRUE,
-                            showValueAsTags = TRUE,
-                            width = '100%'
-                        )
-                    ),
-                    column(
                         4,
                         virtualSelectInput(
                             inputId = "analyte",
-                            label = "Compound:",
+                            label = "Protein Form:",
                             choices = list(
                                 "crude protein" = "crude protein",
                                 "Essential amino acid" = c(
@@ -853,11 +840,27 @@ ui <- fluidPage(
                                 "Conditionally essential amino acid" = c("arginine", "cysteine", "glycine", "proline", "tyrosine"),
                                 "Non-essential amino acid" = c("alanine", "aspartic acid", "glutamic acid",  "serine")
                             ),
-                            selected = unique(as.character(Protein_Digestibility_Data$`Compound`)),
+                            selected = unique(as.character(Protein_Digestibility_Data$`Protein Form`)),
                             showValueAsTags = TRUE,
                             multiple = TRUE,
                             width = '100%'
                         )
+                    ),
+                    column(
+                      2,
+                      virtualSelectInput(
+                        inputId = "measure",
+                        label = "Calculation:",
+                        choices = c(unique(
+                          as.character(Protein_Digestibility_Data$Calculation)
+                        )),
+                        selected = c(unique(
+                          as.character(Protein_Digestibility_Data$Calculation)
+                        )),
+                        multiple = TRUE,
+                        showValueAsTags = TRUE,
+                        width = '100%'
+                      )
                     )
                 ),
                 fluidRow(br()),
@@ -897,7 +900,7 @@ ui <- fluidPage(
                         class = "accordion-content",
                         style = "background-color: #F6F6F6;padding-left: 30px;padding-right: 20px; padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
                         p(
-                            "Here you will find the food composition data used to calculate protein quality scores. "
+                            "In this tab, you will find the food composition data collected for use in protein quality scoring."
                         ),
                         br()
                     )
@@ -931,7 +934,7 @@ ui <- fluidPage(
                         2,
                         textInput(
                             inputId = "source_tab3",
-                            label = "Sources:",
+                            label = "Data Source(s):",
                             width = '100%'
                         )
                     )
@@ -1112,7 +1115,7 @@ server <- function(input, output, session) {
                 filter(`Species` %in% input$species) %>%
                 filter(`Model` %in% input$model) %>%
                 filter(`Sample Location` %in% input$sample) %>%
-                filter(`Compound` %in% input$analyte) %>%
+                filter(`Protein Form` %in% input$analyte) %>%
                 filter(Calculation %in% input$measure) %>%
                 filter(str_detect(
                     NI_ID, ifelse(
@@ -1398,9 +1401,9 @@ server <- function(input, output, session) {
                 separate_longer_delim(NI_ID, delim = ";") %>%
                 mutate(NI_ID = str_trim(NI_ID)) %>%
                 left_join(Protein_Digestibility_Data %>%
-                              select(NI_ID, Food, `Bio-avail  (%)`, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              select(NI_ID, Food, `Bio-avail  (%)`, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               mutate(Food = str_remove(Food, ", Average")) %>%
-                              group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               summarise(`Bio-avail  (%)` = round(sum(`Bio-avail  (%)`, na.rm = TRUE)/n(),2), NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                               separate_longer_delim(NI_ID, delim = "; ") %>%
                               distinct()) %>%
@@ -1415,34 +1418,34 @@ server <- function(input, output, session) {
                 select(!min_indicator) %>%
                 mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
                 distinct() %>%
-                group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                 mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                 distinct() %>%
                 mutate(`EAA-9` = `EAA-9` * ifelse(!is.na(`Bio-avail  (%)`), (as.numeric(`Bio-avail  (%)`) / 100), 1)) %>%
                 mutate(`EAA-9` = round(`EAA-9` * 100, 2)) %>%
                 mutate(calculation = ifelse(is.na(`Bio-avail  (%)`), gsub(" x bioavailability", "", calculation), calculation)) %>%
                 mutate(calculation = paste0(calculation, " \n = ", `EAA-9`, "%")) %>%
-                filter(ifelse(!is.na(Compound),
-                    `Compound` == "crude protein" |
-                        `Limiting AA` == `Compound` |
+                filter(ifelse(!is.na(`Protein Form`),
+                    `Protein Form` == "crude protein" |
+                        `Limiting AA` == `Protein Form` |
                         (
                             `Limiting AA` == "methionine+cysteine" &
-                                `Compound` == "methionine"
+                                `Protein Form` == "methionine"
                         ) |
                         (
                             `Limiting AA` == "phenylalanine+tyrosine" &
-                                `Compound` == "phenylalanine"
+                                `Protein Form` == "phenylalanine"
                         ) | (
-                            `Limiting AA` == "lysine" & `Compound` == "reactive lysine"
+                            `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
                         ), !is.na(`EAA-9`))
                 ) %>%
                 select(
                     NI_ID,
                     Food,
-                    Calculation,
-                    `Sample Location`,
                     Species,
-                    `Compound`,
+                    `Sample Location`,
+                    `Protein Form`,
+                    Calculation,
                     `Bio-avail  (%)`,
                     `Limiting AA`,
                     fdcId,
@@ -1455,7 +1458,8 @@ server <- function(input, output, session) {
                 rename("serving size" = "portion") %>%
                 rename("EAA-9 (%)" = "EAA-9") %>%
                 mutate(`Bio-avail  (%)` = as.character(`Bio-avail  (%)`)) %>%
-                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", Compound = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available"))
+                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", `Protein Form` = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available")) %>%
+                distinct()
 
             if(input$show_calc == "score_only"){
                 EAA_9 <- EAA_9 %>%
@@ -1547,9 +1551,9 @@ server <- function(input, output, session) {
                 separate_longer_delim(NI_ID, delim = ";") %>%
                 mutate(NI_ID = str_trim(NI_ID)) %>%
                 left_join(Protein_Digestibility_Data %>%
-                              select(NI_ID, Food, `Bio-avail  (%)`, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              select(NI_ID, Food, `Bio-avail  (%)`, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               mutate(Food = str_remove(Food, ", Average")) %>%
-                              group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               summarise(`Bio-avail  (%)` = round(sum(`Bio-avail  (%)`, na.rm = TRUE)/n(),2), NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                               separate_longer_delim(NI_ID, delim = "; ") %>%
                               distinct()) %>%
@@ -1563,22 +1567,22 @@ server <- function(input, output, session) {
                 select(!indicator) %>%
                 select(!min_indicator) %>%
                 mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
-                group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                 mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                 distinct() %>%
                 mutate(PDCAAS = PDCAAS * ifelse(!is.na(`Bio-avail  (%)`), (as.numeric(`Bio-avail  (%)`) / 100), 1)) %>%
                 filter(
-                    `Compound` == "crude protein" |
-                        `Limiting AA` == `Compound` |
+                    `Protein Form` == "crude protein" |
+                        `Limiting AA` == `Protein Form` |
                         (
                             `Limiting AA` == "methionine+cysteine" &
-                                `Compound` == "methionine"
+                                `Protein Form` == "methionine"
                         ) |
                         (
                             `Limiting AA` == "phenylalanine+tyrosine" &
-                                `Compound` == "phenylalanine"
+                                `Protein Form` == "phenylalanine"
                         ) | (
-                            `Limiting AA` == "lysine" & `Compound` == "reactive lysine"
+                            `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
                         )
                 ) %>%
                 mutate(PDCAAS = round(PDCAAS, 4)) %>%
@@ -1586,10 +1590,10 @@ server <- function(input, output, session) {
                 select(
                     NI_ID,
                     Food,
-                    Calculation,
-                    `Sample Location`,
                     Species,
-                    `Compound`,
+                    `Sample Location`,
+                    `Protein Form`,
+                    Calculation,
                     `Bio-avail  (%)`,
                     `Limiting AA`,
                     fdcId,
@@ -1600,7 +1604,8 @@ server <- function(input, output, session) {
                 ) %>%
                 distinct() %>%
                 mutate(`Bio-avail  (%)` = as.character(`Bio-avail  (%)`)) %>%
-                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", Compound = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available"))
+                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", `Protein Form` = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available")) %>%
+                distinct()
 
 
             rm(temp_2)
@@ -1696,9 +1701,9 @@ server <- function(input, output, session) {
                 separate_longer_delim(NI_ID, delim = ";") %>%
                 mutate(NI_ID = str_trim(NI_ID)) %>%
                 left_join(Protein_Digestibility_Data %>%
-                              select(NI_ID, Food, `Bio-avail  (%)`, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              select(NI_ID, Food, `Bio-avail  (%)`, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               mutate(Food = str_remove(Food, ", Average")) %>%
-                              group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               summarise(`Bio-avail  (%)` = round(sum(`Bio-avail  (%)`, na.rm = TRUE)/n(),2), NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                               separate_longer_delim(NI_ID, delim = "; ") %>%
                               distinct()) %>%
@@ -1712,22 +1717,22 @@ server <- function(input, output, session) {
                 select(!indicator) %>%
                 select(!min_indicator) %>%
                 mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
-                group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                 mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                 distinct() %>%
                 mutate(DIAAS = DIAAS * ifelse(!is.na(`Bio-avail  (%)`), (as.numeric(`Bio-avail  (%)`) / 100), 1)) %>%
                 filter(
-                    `Compound` == "crude protein" |
-                        `Limiting AA` == `Compound` |
+                    `Protein Form` == "crude protein" |
+                        `Limiting AA` == `Protein Form` |
                         (
                             `Limiting AA` == "methionine+cysteine" &
-                                `Compound` == "methionine"
+                                `Protein Form` == "methionine"
                         ) |
                         (
                             `Limiting AA` == "phenylalanine+tyrosine" &
-                                `Compound` == "phenylalanine"
+                                `Protein Form` == "phenylalanine"
                         ) | (
-                            `Limiting AA` == "lysine" & `Compound` == "reactive lysine"
+                            `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
                         )
                 ) %>%
                 mutate(DIAAS = round(DIAAS, 4)) %>%
@@ -1735,10 +1740,10 @@ server <- function(input, output, session) {
                 select(
                     NI_ID,
                     Food,
-                    Calculation,
-                    `Sample Location`,
                     Species,
-                    `Compound`,
+                    `Sample Location`,
+                    `Protein Form`,
+                    Calculation,
                     `Bio-avail  (%)`,
                     `Limiting AA`,
                     fdcId,
@@ -1749,7 +1754,8 @@ server <- function(input, output, session) {
                 ) %>%
                 distinct() %>%
                 mutate(`Bio-avail  (%)` = as.character(`Bio-avail  (%)`)) %>%
-                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", Compound = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available"))
+                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", `Protein Form` = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available")) %>%
+                distinct()
 
 
             rm(temp_2)
@@ -1775,22 +1781,22 @@ server <- function(input, output, session) {
         if ("crude protein" %in% input$pq_analyte) {
             if (!("individual amino acids" %in% input$pq_analyte)) {
                 PQ_df <- PQ_df %>%
-                    filter(`Compound` == "crude protein")
+                    filter(`Protein Form` == "crude protein")
             }
         }
         if ("individual amino acids" %in% input$pq_analyte) {
             if (!("crude protein" %in% input$pq_analyte)) {
                 PQ_df <- PQ_df %>%
-                    filter(`Compound` != "crude protein")
+                    filter(`Protein Form` != "crude protein")
             }
         }
         PQ_df <- PQ_df %>%
-            arrange(Species, Calculation, `Sample Location`, Compound, Food) %>%
+            arrange(Species, Calculation, `Sample Location`, `Protein Form`, Food) %>%
             filter((`Sample Location` %in% input$pq_sample) | (`Sample Location` == "Not Available" & input$require_bioavail == FALSE)) %>%
             filter(Calculation %in% input$pq_measure| (Calculation == "Not Available" & input$require_bioavail == FALSE)) %>%
             filter(Species %in% input$pq_species| (Species == "Not Available" & input$require_bioavail == FALSE)) %>%
             rename("Bio-avail Species" = "Species") %>%
-            rename("Bio-avail Compound" = "Compound") %>%
+            rename("Bio-avail Protein Form" = "Protein Form") %>%
             rename("Bio-avail Sample Location" = "Sample Location") %>%
             rename("Bio-avail Calculation" = "Calculation") %>%
             rename("Bioavailability Ref" = "Data Collection Source") %>%
@@ -1812,7 +1818,8 @@ server <- function(input, output, session) {
                 where(is.character), ~ gsub("\n", "<br>", .)
             )) %>%
             relocate(`Bioavailability Ref`, .after = last_col()) %>%
-            relocate(`Food Composition Ref`, .after = last_col())
+            relocate(`Food Composition Ref`, .after = last_col()) %>%
+          arrange(`Bio-avail Species`)
 
         DT::datatable(
             PQ_df,
@@ -1824,8 +1831,9 @@ server <- function(input, output, session) {
                 dom = 'ltip',
                 pageLength = 25,
                 lengthMenu = c(15, 25, 50, 75, 100),
+                order = list(list(2, 'asc'), list(3, 'asc'), list(4, 'asc'), list(5, 'asc')),
                 columnDefs = list(
-                    list(targets = c(1, 2, 9), className = "dt-head-nowrap"),
+                    # list(targets = c(1, 2, 9), className = "dt-head-nowrap"),
                     list(
                         targets = c('Bioavailability Ref','Food Composition Ref'),
                         render = JS(
@@ -1839,12 +1847,10 @@ server <- function(input, output, session) {
             ),
             escape = FALSE  # Allow HTML rendering
         ) %>%
-            formatStyle(1:13,
+            formatStyle(1:ncol(PQ_df),
                         'vertical-align' = 'top',
                         'overflow-wrap' = 'break-word') %>%
-            formatStyle(7, width = '80px')
-        # formatStyle(8, width = '5%') %>%
-        # formatStyle(ncol(PQ_df), width = '8%')
+            formatStyle(2:7, width = '90px')
     })
 
     # render table for food mappings
@@ -2162,9 +2168,9 @@ server <- function(input, output, session) {
                 separate_longer_delim(NI_ID, delim = ";") %>%
                 mutate(NI_ID = str_trim(NI_ID)) %>%
                 left_join(Protein_Digestibility_Data %>%
-                              select(NI_ID, Food, `Bio-avail  (%)`, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              select(NI_ID, Food, `Bio-avail  (%)`, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               mutate(Food = str_remove(Food, ", Average")) %>%
-                              group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               summarise(`Bio-avail  (%)` = round(sum(`Bio-avail  (%)`, na.rm = TRUE)/n(),2), NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                               separate_longer_delim(NI_ID, delim = "; ") %>%
                               distinct()) %>%
@@ -2179,34 +2185,34 @@ server <- function(input, output, session) {
                 select(!min_indicator) %>%
                 mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
                 distinct() %>%
-                group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                 mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                 distinct() %>%
                 mutate(`EAA-9` = `EAA-9` * ifelse(!is.na(`Bio-avail  (%)`), (as.numeric(`Bio-avail  (%)`) / 100), 1)) %>%
                 mutate(`EAA-9` = round(`EAA-9` * 100, 2)) %>%
                 mutate(calculation = ifelse(is.na(`Bio-avail  (%)`), gsub(" x bioavailability", "", calculation), calculation)) %>%
                 mutate(calculation = paste0(calculation, " \n = ", `EAA-9`, "%")) %>%
-                filter(ifelse(!is.na(Compound),
-                              `Compound` == "crude protein" |
-                                  `Limiting AA` == `Compound` |
+                filter(ifelse(!is.na(`Protein Form`),
+                              `Protein Form` == "crude protein" |
+                                  `Limiting AA` == `Protein Form` |
                                   (
                                       `Limiting AA` == "methionine+cysteine" &
-                                          `Compound` == "methionine"
+                                          `Protein Form` == "methionine"
                                   ) |
                                   (
                                       `Limiting AA` == "phenylalanine+tyrosine" &
-                                          `Compound` == "phenylalanine"
+                                          `Protein Form` == "phenylalanine"
                                   ) | (
-                                      `Limiting AA` == "lysine" & `Compound` == "reactive lysine"
+                                      `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
                                   ), !is.na(`EAA-9`))
                 ) %>%
                 select(
                     NI_ID,
                     Food,
-                    Calculation,
-                    `Sample Location`,
                     Species,
-                    `Compound`,
+                    `Sample Location`,
+                    `Protein Form`,
+                    Calculation,
                     `Bio-avail  (%)`,
                     `Limiting AA`,
                     fdcId,
@@ -2219,7 +2225,8 @@ server <- function(input, output, session) {
                 rename("serving size" = "portion") %>%
                 rename("EAA-9 (%)" = "EAA-9") %>%
                 mutate(`Bio-avail  (%)` = as.character(`Bio-avail  (%)`)) %>%
-                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", Compound = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available"))
+                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", `Protein Form` = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available")) %>%
+                distinct()
 
             if(input$show_calc == "score_only"){
                 EAA_9 <- EAA_9 %>%
@@ -2306,9 +2313,9 @@ server <- function(input, output, session) {
                 separate_longer_delim(NI_ID, delim = ";") %>%
                 mutate(NI_ID = str_trim(NI_ID)) %>%
                 left_join(Protein_Digestibility_Data %>%
-                              select(NI_ID, Food, `Bio-avail  (%)`, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              select(NI_ID, Food, `Bio-avail  (%)`, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               mutate(Food = str_remove(Food, ", Average")) %>%
-                              group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               summarise(`Bio-avail  (%)` = round(sum(`Bio-avail  (%)`, na.rm = TRUE)/n(),2), NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                               separate_longer_delim(NI_ID, delim = "; ") %>%
                               distinct()) %>%
@@ -2322,22 +2329,22 @@ server <- function(input, output, session) {
                 select(!indicator) %>%
                 select(!min_indicator) %>%
                 mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
-                group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                 mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                 distinct() %>%
                 mutate(PDCAAS = PDCAAS * ifelse(!is.na(`Bio-avail  (%)`), (as.numeric(`Bio-avail  (%)`) / 100), 1)) %>%
                 filter(
-                    `Compound` == "crude protein" |
-                        `Limiting AA` == `Compound` |
+                    `Protein Form` == "crude protein" |
+                        `Limiting AA` == `Protein Form` |
                         (
                             `Limiting AA` == "methionine+cysteine" &
-                                `Compound` == "methionine"
+                                `Protein Form` == "methionine"
                         ) |
                         (
                             `Limiting AA` == "phenylalanine+tyrosine" &
-                                `Compound` == "phenylalanine"
+                                `Protein Form` == "phenylalanine"
                         ) | (
-                            `Limiting AA` == "lysine" & `Compound` == "reactive lysine"
+                            `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
                         )
                 ) %>%
                 mutate(PDCAAS = round(PDCAAS, 4)) %>%
@@ -2345,10 +2352,10 @@ server <- function(input, output, session) {
                 select(
                     NI_ID,
                     Food,
-                    Calculation,
-                    `Sample Location`,
                     Species,
-                    `Compound`,
+                    `Sample Location`,
+                    `Protein Form`,
+                    Calculation,
                     `Bio-avail  (%)`,
                     `Limiting AA`,
                     fdcId,
@@ -2359,7 +2366,8 @@ server <- function(input, output, session) {
                 ) %>%
                 distinct() %>%
                 mutate(`Bio-avail  (%)` = as.character(`Bio-avail  (%)`)) %>%
-                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", Compound = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available"))
+                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", `Protein Form` = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available")) %>%
+                distinct()
 
 
             rm(temp_2)
@@ -2449,9 +2457,9 @@ server <- function(input, output, session) {
                 separate_longer_delim(NI_ID, delim = ";") %>%
                 mutate(NI_ID = str_trim(NI_ID)) %>%
                 left_join(Protein_Digestibility_Data %>%
-                              select(NI_ID, Food, `Bio-avail  (%)`, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              select(NI_ID, Food, `Bio-avail  (%)`, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               mutate(Food = str_remove(Food, ", Average")) %>%
-                              group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                              group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                               summarise(`Bio-avail  (%)` = round(sum(`Bio-avail  (%)`, na.rm = TRUE)/n(),2), NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                               separate_longer_delim(NI_ID, delim = "; ") %>%
                               distinct()) %>%
@@ -2465,22 +2473,22 @@ server <- function(input, output, session) {
                 select(!indicator) %>%
                 select(!min_indicator) %>%
                 mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
-                group_by(Food, Species, Compound, `Sample Location`, Calculation, `Data Collection Source`) %>%
+                group_by(Food, Species, `Protein Form`, `Sample Location`, Calculation, `Data Collection Source`) %>%
                 mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
                 distinct() %>%
                 mutate(DIAAS = DIAAS * ifelse(!is.na(`Bio-avail  (%)`), (as.numeric(`Bio-avail  (%)`) / 100), 1)) %>%
                 filter(
-                    `Compound` == "crude protein" |
-                        `Limiting AA` == `Compound` |
+                    `Protein Form` == "crude protein" |
+                        `Limiting AA` == `Protein Form` |
                         (
                             `Limiting AA` == "methionine+cysteine" &
-                                `Compound` == "methionine"
+                                `Protein Form` == "methionine"
                         ) |
                         (
                             `Limiting AA` == "phenylalanine+tyrosine" &
-                                `Compound` == "phenylalanine"
+                                `Protein Form` == "phenylalanine"
                         ) | (
-                            `Limiting AA` == "lysine" & `Compound` == "reactive lysine"
+                            `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
                         )
                 ) %>%
                 mutate(DIAAS = round(DIAAS, 4)) %>%
@@ -2488,10 +2496,10 @@ server <- function(input, output, session) {
                 select(
                     NI_ID,
                     Food,
-                    Calculation,
-                    `Sample Location`,
                     Species,
-                    `Compound`,
+                    `Sample Location`,
+                    `Protein Form`,
+                    Calculation,
                     `Bio-avail  (%)`,
                     `Limiting AA`,
                     fdcId,
@@ -2502,7 +2510,8 @@ server <- function(input, output, session) {
                 ) %>%
                 distinct() %>%
                 mutate(`Bio-avail  (%)` = as.character(`Bio-avail  (%)`)) %>%
-                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", Compound = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available"))
+                replace_na(list(Calculation = "Not Available", `Sample Location` = "Not Available", `Protein Form` = "Not Available", Species = "Not Available", `Bio-avail  (%)` = "Not Available", `Data Collection Source` = "Not Available")) %>%
+                distinct()
 
 
             rm(temp_2)
@@ -2524,22 +2533,22 @@ server <- function(input, output, session) {
         if ("crude protein" %in% input$pq_analyte) {
             if (!("individual amino acids" %in% input$pq_analyte)) {
                 PQ_df <- PQ_df %>%
-                    filter(`Compound` == "crude protein")
+                    filter(`Protein Form` == "crude protein")
             }
         }
         if ("individual amino acids" %in% input$pq_analyte) {
             if (!("crude protein" %in% input$pq_analyte)) {
                 PQ_df <- PQ_df %>%
-                    filter(`Compound` != "crude protein")
+                    filter(`Protein Form` != "crude protein")
             }
         }
         PQ_df %>%
-            arrange(Species, Calculation, `Sample Location`, Compound, Food) %>%
+            arrange(Species, Calculation, `Sample Location`, `Protein Form`, Food) %>%
             filter((`Sample Location` %in% input$pq_sample) | (`Sample Location` == "Not Available" & input$require_bioavail == FALSE)) %>%
             filter(Calculation %in% input$pq_measure| (Calculation == "Not Available" & input$require_bioavail == FALSE)) %>%
             filter(Species %in% input$pq_species| (Species == "Not Available" & input$require_bioavail == FALSE)) %>%
             rename("Bio-avail Species" = "Species") %>%
-            rename("Bio-avail Compound" = "Compound") %>%
+            rename("Bio-avail Protein Form" = "Protein Form") %>%
             rename("Bio-avail Sample Location" = "Sample Location") %>%
             rename("Bio-avail Calculation" = "Calculation") %>%
             rename("Bioavailability Ref" = "Data Collection Source") %>%
@@ -2581,7 +2590,7 @@ server <- function(input, output, session) {
             filter(`Species` %in% input$species) %>%
             filter(`Model` %in% input$model) %>%
             filter(`Sample Location` %in% input$sample) %>%
-            filter(`Compound` %in% input$analyte) %>%
+            filter(`Protein Form` %in% input$analyte) %>%
             filter(Calculation %in% input$measure) %>%
             filter(str_detect(
                 NI_ID, ifelse(
