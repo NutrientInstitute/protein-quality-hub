@@ -8,9 +8,9 @@ library(shinyjs)
 library(bslib)
 library(openxlsx)
 
-# Protein_Digestibility_Data <- read_csv("https://raw.githubusercontent.com/NutrientInstitute/protein-quality-hub/main/Protein%20Digestibility%20Data%20%20-%20full%20data.csv") %>%
+
 Protein_Digestibility_Data <-
-    read_csv("Protein Digestibility Data  - full data.csv") %>%
+    read_csv("Bioavailability  - full data.csv") %>%
     mutate(`Protein Form` = ifelse(`Protein Form` == "cystine", "cysteine", `Protein Form`)) %>%
     mutate(`Protein Form` = ifelse(`Protein Form` == "arganine", "arginine", `Protein Form`)) %>%
     select(!Notes) %>%
