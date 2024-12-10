@@ -10,7 +10,7 @@ library(openxlsx)
 
 
 Protein_Digestibility_Data <-
-    read_csv("Bioavailability  - full data.csv") %>%
+    read_csv("Bioavailability - full data.csv") %>%
     mutate(`Protein Form` = ifelse(`Protein Form` == "cystine", "cysteine", `Protein Form`)) %>%
     mutate(`Protein Form` = ifelse(`Protein Form` == "arganine", "arginine", `Protein Form`)) %>%
     select(!Notes) %>%
@@ -502,8 +502,8 @@ ui <- fluidPage(
                               checkboxGroupInput(
                                 inputId = "pq_species",
                                 label = "Species",
-                                choices = c("human", "human (predicted from pig)", "pig", "rat"),
-                                selected = c("human", "human (predicted from pig)", "pig", "rat")
+                                choices = c("human", "human (predicted from swine)", "swine", "rat"),
+                                selected = c("human", "human (predicted from swine)", "swine", "rat")
                               )
                             ),
                             column(
@@ -793,7 +793,7 @@ ui <- fluidPage(
                       virtualSelectInput(
                         inputId = "species",
                         label = "Species:",
-                        choices = c("human", "human (predicted from pig)", "pig", "rat"),
+                        choices = c("human", "human (predicted from swine)", "swine", "rat"),
                         selected = c(unique(
                           as.character(Protein_Digestibility_Data$Species)
                         )),
@@ -881,7 +881,7 @@ ui <- fluidPage(
                          DT::dataTableOutput("table"))
             ),
             nav_panel(
-                "AA Composition Data",
+                "EAA Composition Data",
                 fluidRow(
                     div(
                         id = "info-toggle_3",
@@ -2566,9 +2566,6 @@ server <- function(input, output, session) {
                     paste0("(?i)", input$food_tab1)
                 )
             )) %>%
-            mutate(across(
-                where(is.character), ~ gsub("\n", "<br>", .)
-            )) %>%
             relocate(`Bioavailability Ref`, .after = last_col()) %>%
             relocate(`Food Composition Ref`, .after = last_col())
     })
@@ -2631,10 +2628,7 @@ server <- function(input, output, session) {
                             paste0("(?i)", input$source_tab2)
                         )
                     )
-            ) %>%
-            mutate(across(
-                where(is.character), ~ gsub("\n", "<br>", .)
-            ))
+            )
     })
     data_eaa <- reactive({fdcmp_df <- EAA_composition %>%
         filter(str_detect(NI_ID, ifelse(
