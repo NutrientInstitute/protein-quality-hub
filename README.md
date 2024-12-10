@@ -9,5 +9,3 @@ To provide feedback on this app or sign up to be notified about future releases,
 This repository contains the resources used to run the [Protein Quality Hub app](https://nutrientinstitute.shinyapps.io/ProteinQualityHub/). The code used to generate the app can be found in the [app.R](https://github.com/NutrientInstitute/protein-quality-hub/blob/main/app.R) file; additional information on specific data files and variables can be found in the [data dictionary](https://github.com/NutrientInstitute/protein-quality-hub/blob/main/Data%20Dictionary.pdf). 
 
 
-
-**Please note that this project is actively under development and data is subject to change prior to a full release.** 
