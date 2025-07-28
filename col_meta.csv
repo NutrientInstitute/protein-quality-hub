@@ -1,0 +1,54 @@
+col,tooltip
+Analysis method(s),"Name of the analysis method(s), technique(s), or assay(s) used to measure bioavailability, as specified in the source the data was collected from"
+Calculation,The protein or amino acid for which correction factor coefficient is provided
+Correction Factor  (%),"Value of the associated correction factor measure, expressed as a percentage"
+Correction Factor Calculation,"The name of the correction factor (i.e. apparent digestibility, metabolic availability, etc...)
+
+Defined as “Calculation” in the Correction Factors table"
+Correction Factor Protein Form,"The protein or amino acid for which correction factor coefficient is provided
+
+Defined as “Protein Form” in the Correction Factors table"
+Correction Factor Sample Location,"The type or location of sample collected for analysis (e.g. ileal, fecal, etc...)
+
+Defined as “Sample Location” in the Correction Factors table"
+Correction Factor SD,Standard deviation of the provided value
+Correction Factor Species,"Target species of bioavailability analysis
+
+Defined as “Species” in the Correction Factors table"
+Data Collection Source,A citation indicating where the data appearing in this table was collected from - citations created using CDFC Citation Generator
+description,Description of the food provided by the food composition data source
+DIAAS,DIAAS calculated as documented in github README.md and the 'Definitions and Calculations'  section above the Protein Quality Scoring table
+Diet,Description of the diet consumed by experimental subjects
+EAA-9 (%),EAA-9 score calculated as documented in github README.md and the 'Definitions and Calculations'  section above the Protein Quality Scoring table
+FDC_ID,"FoodData Central (FDC) identifier, used to map correction factors to food composition data from FoodData Central"
+fdcId,"FoodData Central (FDC) identifier, used to map protein correction factors to food composition data from FoodData Central"
+Food,"Description of the food, as provided by the source of correction factor data"
+Food Composition Ref,A citation indicating where food composition data was collected - citations created using CDFC Citation Generator
+Food Composition Ref No,"Number of associated food composition data reference - full references can be found in the the 'Definitions and Calculations'  section above the AA Composition Data Table and in EAA_composition.csv 
+
+Defined as “Ref No” in the AA Composition Data table"
+Food description,Description of the food provided by the food composition data source
+Food group,Food group as specified by the data source from which the correction factor data was collected
+His (g/100g),Grams of histidine per 100g of food
+Ile (g/100g),Grams of isoleucine per 100g of food
+Leu (g/100g),Grams of leucine per 100g of food
+Limiting AA,The limiting essential amino acid determined by the amino acid scoring pattern or recommendations
+Lys (g/100g),Grams of lysine per 100g of food
+Met+Cys (g/100g),Grams of methionine and cystine per 100g of food
+Model,Experimental model (either in vivo or in vitro)
+n,Number of subjects from which in vivo data was collected (if applicable)
+NI_ID,Unique Nutrient Institute (NI) identifier for each correction factor data point.
+Notes,Any additional notes or comments applicable to the collected data that are provided in the source data has been collected from.
+Correction Factor Ref,A citation or list of ordered citations indicating the original source(s) of the correction factor data (as cited in the source data was collected from).
+Original Data Source(s),A citation or list of ordered citations indicating the original source(s) of the correction factor data (as cited in the source data was collected from).
+PDCAAS,PDCAAS calculated as documented in github README.md and the 'Definitions and Calculations' section above the Protein Quality Scoring table
+Phe+Tyr (g/100g),Grams of phenylalanine and tyrosine per 100g of food
+Protein (g),Amount of protein (in grams) from the applicable food ingested (in the case of in vivo analysis) or analyzed (in the case of in vitro analysis)
+Protein (g/100g),Grams of protein per 100g of food
+Protein Form,"The name of the correction factor (i.e. apparent digestibility, metabolic availability, etc...)"
+Sample Location,"The type or location of sample collected for analysis (e.g. ileal, fecal, etc...)"
+serving size (if applicable),Serving size of food used to calculate EAA-9 score
+Species,Target species of correction factor analysis
+Thr (g/100g),Grams of threonine per 100g of food
+Trp (g/100g),Grams of tryptophan per 100g of food
+Val (g/100g),Grams of valine per 100g of food

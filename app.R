@@ -27,6 +27,8 @@ EAA_composition <- read_csv("EAA_composition.csv") %>%
 scoring_pattern <- read_csv("scoring_pattern.csv")
 portion_sizes <- read_csv("portion_sizes.csv")
 
+col_meta <- read_csv("col_meta.csv")
+
 
 
 
@@ -135,6 +137,12 @@ ui <- fluidPage(
         width: 100%;
       }
 
+       input::placeholder,
+      textarea::placeholder {
+        font-style: italic;
+        color: #888;
+      }
+
       .nav-tabs > li.active > a,
       .nav-tabs > li.active > a:focus,
       .nav-tabs > li.active > a:hover {
@@ -201,6 +209,10 @@ ui <- fluidPage(
             id = "infoContent_2",
             class = "accordion-content",
             style = "background-color: #F6F6F6;padding-left: 30px;padding-right: 20px; padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
+            p(
+              "The Protein Quality Hub is a resource and an invaluable tool for scientists, educators, students, and health professionals. As the first comprehensive database for protein quality scoring, it features the largest collection of amino acid profiles and digestibility data for a wide range of ingredients and common foods as well as from different species and different sampling sites. It also includes available data concerning the impact of food processing, such as reactive lysine, and compares calculations for apparent and true digestibility. The diverse data on digestibility are integrated into this hub under the naming scheme \"Correction Factors,\" consistent with FAO nomenclature \"correction for amino acid digestibility and availability\"."
+            ),
+            br(),
             p(
               "In the",
               tags$em(" Protein Quality Scoring"),
@@ -287,211 +299,246 @@ ui <- fluidPage(
                            a(href = "10.1016/j.tjnut.2023.06.004", "https://doi.org/10.1016/j.tjnut.2023.06.004"),
                            ". Epub 2023 Jun 8. PMID: 37301285."
                          )
-                       )))
+                       ))),
+            br(),
+            p(style = "font-weight:strong; font-size:120%; ", "Column Definitions:"),
+            HTML(
+              "
+<table style=\"width:100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 30px;\">
+  <thead>
+    <tr>
+      <th style=\"border: 1px solid #ccc; padding: 8px; background-color: #f0f0f0;\">Variable Name(s)</th>
+      <th style=\"border: 1px solid #ccc; padding: 8px; background-color: #f0f0f0;\">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">NI_ID</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Unique Nutrient Institute (NI) identifier for each correction factor data point.</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Food</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Description of the food, as provided by the source of correction factor data</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Correction Factor Species</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Target species of bioavailability analysis<br><span style=\"font-style: italic; color: #888; font-size: 90%;\">Defined as &ldquo;Species&rdquo; in the Correction Factors table</span></td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Correction Factor Sample Location</td><td style=\"border: 1px solid #ccc; padding: 8px;\">The type  or location of sample collected for analysis (e.g. ileal, fecal, etc...)<br><span style=\"font-style: italic; color: #888; font-size: 90%;\">Defined as &ldquo;Sample Location&rdquo; in the Correction Factors table</span></td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Correction Factor Protein Form</td><td style=\"border: 1px solid #ccc; padding: 8px;\">The protein or amino acid for which correction factor coefficient is provided<br><span style=\"font-style: italic; color: #888; font-size: 90%;\">Defined as &ldquo;Protein Form&rdquo; in the Correction Factors table</span></td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Correction Factor Calculation</td><td style=\"border: 1px solid #ccc; padding: 8px;\">The name of the correction factor (i.e. apparent digestibility, metabolic availability, etc...)<br><span style=\"font-style: italic; color: #888; font-size: 90%;\">Defined as &ldquo;Calculation&rdquo; in the Correction Factors table</span></td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Correction Factor (%)</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Value of the associated measure, expressed as a percentage<br><span style=\"font-style: italic; color: #888; font-size: 90%;\">Defined as &ldquo;Value (%)&rdquo; in the Correction Factors table</span></td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Limiting AA</td><td style=\"border: 1px solid #ccc; padding: 8px;\">The limiting essential amino acid determined by the amino acid scoring pattern or recommendations</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">fdcId <span style=\"font-style: italic; font-size: 90%; color: #888;\">(if applicable)</span></td><td style=\"border: 1px solid #ccc; padding: 8px;\">FoodData Central (FDC) identifier, used to map protein correction factors to food composition data from FoodData Central</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">serving size <span style=\"font-style: italic; font-size: 90%; color: #888;\">(if applicable)</span></td><td style=\"border: 1px solid #ccc; padding: 8px;\">Serving size of food used to calculate EAA-9 score</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">EAA-9 (%) <span style=\"font-style: italic; font-size: 90%; color: #888;\">(if applicable)</span></td><td style=\"border: 1px solid #ccc; padding: 8px;\">EAA-9 score calculated as documented in <a href='https://github.com/NutrientInstitute/protein-quality-hub' target='_blank' style=\"color: #3b6ea5; text-decoration: underline;\">github</a> README.md and &lsquo;Definitions and Calculations&rsquo; section above the Protein Quality Scoring table</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">PDCAAS <span style=\"font-style: italic; font-size: 90%; color: #888;\">(if applicable)</span></td><td style=\"border: 1px solid #ccc; padding: 8px;\">PDCAAS calculated as documented in <a href='https://github.com/NutrientInstitute/protein-quality-hub' target='_blank' style=\"color: #3b6ea5; text-decoration: underline;\">github</a> README.md and &lsquo;Definitions and Calculations&rsquo; section above the Protein Quality Scoring table</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">DIAAS <span style=\"font-style: italic; font-size: 90%; color: #888;\">(if applicable)</span></td><td style=\"border: 1px solid #ccc; padding: 8px;\">DIAAS calculated as documented in <a href='https://github.com/NutrientInstitute/protein-quality-hub' target='_blank' style=\"color: #3b6ea5; text-decoration: underline;\">github</a> README.md and &lsquo;Definitions and Calculations&rsquo; section above the Protein Quality Scoring table</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Food Composition Ref</td><td style=\"border: 1px solid #ccc; padding: 8px;\">A citation indicating where food composition data was collected - citations created using <a href='https://www.nutrientinstitute.org/cfdc' target='_blank' style=\"color: #3b6ea5; text-decoration: underline;\">CDFC Citation Generator</a></td></tr>
+
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Correction Factor Ref</td><td style=\"border: 1px solid #ccc; padding: 8px;\">A citation or list of ordered citations indicating the original source(s) of the correction factor data (as cited in the source data was collected from).</td></tr>
+  </tbody>
+</table>
+"
+            )
+
+
+
           )
         )),
-        fluidRow(br()),
-        # Create a new Row in the UI for search options
-        fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
-                 column(
-                   2,
-                   p("Search", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
-                 )),
-        fluidRow(style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 10px; padding-top: 10px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
-                 column(
-                   6,
-                   textInput(
-                     inputId = "search_tab1",
-                     label = "",
-                     placeholder = "Search the Hub...",
-                     width = '100%'
-                   )
-                 )),
-        fluidRow(br()),
-        # Create a new Row in the UI for selectInputs
-        fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
-                 column(
-                   4,
-                   p("Choose scoring method(s)", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
-                 )),
+fluidRow(br()),
+# Create a new Row in the UI for search options
+fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
+         column(
+           2,
+           p("Search", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
+         )),
+fluidRow(style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 10px; padding-top: 10px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
+         column(
+           6,
+           textInput(
+             inputId = "search_tab1",
+             label = "",
+             placeholder = "Search the Hub (e.g. beans, chicken, cheese ...)",
+             width = '100%'
+           )
+         )),
+fluidRow(br()),
+# Create a new Row in the UI for selectInputs
+fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
+         column(
+           4,
+           p("Choose scoring method(s)", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
+         )),
+fluidRow(
+  style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
+  fluidRow(
+    column(
+      3,
+      checkboxGroupInput(
+        inputId = "score",
+        label = "Score(s)",
+        choices = c("PDCAAS", "DIAAS", "EAA-9")
+      ),
+      radioButtons(
+        inputId = "show_calc",
+        label = "Score calculation",
+        choiceNames = c("Show calculation and score", "Show score only"),
+        choiceValues = c("show_calc", "score_only")
+      )
+    ),
+    column(
+      3,
+      conditionalPanel(
+        condition = "input.score.includes('PDCAAS')",
+        p("PDCAAS Scoring options:", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;"),
         fluidRow(
-          style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
-          fluidRow(
-            column(
-              3,
-              checkboxGroupInput(
-                inputId = "score",
-                label = "Score(s)",
-                choices = c("PDCAAS", "DIAAS", "EAA-9")
+          style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 15px;",
+          pickerInput(
+            inputId = "EAA_rec_PDCAAS",
+            label = "EAA Recommendations",
+            choices = unique(unlist(
+              scoring_pattern %>% filter(Unit == "mg/g protein") %>% select(`Pattern Name`)
+            )),
+            selected = "FAO Scoring Pattern"
+          ),
+          pickerInput(
+            inputId = "rec_age_PDCAAS",
+            label = "Age",
+            choices = unique(scoring_pattern$Age)
+          ),
+          br()
+        )
+      )
+    ),
+    column(
+      3,
+      conditionalPanel(
+        condition = "input.score.includes('DIAAS')",
+        p("DIAAS Scoring options:", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;"),
+        fluidRow(
+          style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 15px;",
+          pickerInput(
+            inputId = "EAA_rec_DIAAS",
+            label = "EAA Recommendations",
+            choices = unique(unlist(
+              scoring_pattern %>% filter(Unit == "mg/g protein") %>% select(`Pattern Name`)
+            )),
+            selected = "FAO Scoring Pattern"
+          ),
+          pickerInput(
+            inputId = "rec_age_DIAAS",
+            label = "Age",
+            choices = unique(scoring_pattern$Age)
+          ),
+          br()
+        )
+      )
+    ),
+    column(
+      3,
+      conditionalPanel(
+        condition = "input.score.includes('EAA-9')",
+        p("EAA-9 Scoring options:", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;"),
+        fluidRow(
+          style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 15px;",
+          pickerInput(
+            inputId = "EAA_rec",
+            label = "EAA Recommendations",
+            choices = unique(c(
+              unlist(
+                scoring_pattern %>% filter(Unit == "mg/kg/d") %>% select(`Pattern Name`)
               ),
-              radioButtons(
-                inputId = "show_calc",
-                label = "Score calculation",
-                choiceNames = c("Show calculation and score", "Show score only"),
-                choiceValues = c("show_calc", "score_only")
-              )
-            ),
-            column(
-              3,
-              conditionalPanel(
-                condition = "input.score.includes('PDCAAS')",
-                p("PDCAAS Scoring options:", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;"),
-                fluidRow(
-                  style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 15px;",
-                  pickerInput(
-                    inputId = "EAA_rec_PDCAAS",
-                    label = "EAA Recommendations",
-                    choices = unique(unlist(
-                      scoring_pattern %>% filter(Unit == "mg/g protein") %>% select(`Pattern Name`)
-                    )),
-                    selected = "FAO Scoring Pattern"
-                  ),
-                  pickerInput(
-                    inputId = "rec_age_PDCAAS",
-                    label = "Age",
-                    choices = unique(scoring_pattern$Age)
-                  ),
-                  br()
-                )
-              )
-            ),
-            column(
-              3,
-              conditionalPanel(
-                condition = "input.score.includes('DIAAS')",
-                p("DIAAS Scoring options:", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;"),
-                fluidRow(
-                  style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 15px;",
-                  pickerInput(
-                    inputId = "EAA_rec_DIAAS",
-                    label = "EAA Recommendations",
-                    choices = unique(unlist(
-                      scoring_pattern %>% filter(Unit == "mg/g protein") %>% select(`Pattern Name`)
-                    )),
-                    selected = "FAO Scoring Pattern"
-                  ),
-                  pickerInput(
-                    inputId = "rec_age_DIAAS",
-                    label = "Age",
-                    choices = unique(scoring_pattern$Age)
-                  ),
-                  br()
-                )
-              )
-            ),
-            column(
-              3,
-              conditionalPanel(
-                condition = "input.score.includes('EAA-9')",
-                p("EAA-9 Scoring options:", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;"),
-                fluidRow(
-                  style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 15px;",
-                  pickerInput(
-                    inputId = "EAA_rec",
-                    label = "EAA Recommendations",
-                    choices = unique(c(
-                      unlist(
-                        scoring_pattern %>% filter(Unit == "mg/kg/d") %>% select(`Pattern Name`)
-                      ),
-                      "Choose custom recommendations"
-                    )),
-                    selected = "RDA for Adults"
-                  ),
-                  conditionalPanel(condition = "input.EAA_rec == 'Choose custom recommendations'",
-                                   fluidRow(
-                                     column(
-                                       4,
-                                       numericInput(
-                                         inputId = "his",
-                                         label = "His (mg/kg/d)",
-                                         value = "14",
-                                         width = '90px'
-                                       ),
-                                       numericInput(
-                                         inputId = "leu",
-                                         label = "Leu (mg/kg/d)",
-                                         value = "19",
-                                         width = '90px'
-                                       ),
-                                       numericInput(
-                                         inputId = "ile",
-                                         label = "Ile (mg/kg/d)",
-                                         value = "42",
-                                         width = '90px'
-                                       )
-                                     ),
-                                     column(
-                                       4,
-                                       numericInput(
-                                         inputId = "lys",
-                                         label = "Lys (mg/kg/d)",
-                                         value = "38",
-                                         width = '90px'
-                                       ),
-                                       numericInput(
-                                         inputId = "met_cys",
-                                         label = "Met+Cys (mg/kg/d)",
-                                         value = "19",
-                                         width = '90px'
-                                       ),
-                                       numericInput(
-                                         inputId = "phe_tyr",
-                                         label = "Phe+Tyr (mg/kg/d)",
-                                         value = "33",
-                                         width = '90px'
-                                       )
-                                     ),
-                                     column(
-                                       4,
-                                       numericInput(
-                                         inputId = "thr",
-                                         label = "Thr (mg/kg/d)",
-                                         value = "20",
-                                         width = '90px'
-                                       ),
-                                       numericInput(
-                                         inputId = "trp",
-                                         label = "Trp (mg/kg/d)",
-                                         value = "5",
-                                         width = '90px'
-                                       ),
-                                       numericInput(
-                                         inputId = "val",
-                                         label = "Val (mg/kg/d)",
-                                         value = "24",
-                                         width = '90px'
-                                       )
-                                     )
-                                   )),
-                  conditionalPanel(
-                    condition = "input.EAA_rec!='Choose custom recommendations'",
-                    pickerInput(
-                      inputId = "rec_age",
-                      label = "Age",
-                      choices = unique(scoring_pattern$Age)
-                    )
-                  ),
-                  numericInput(
-                    inputId = "weight",
-                    label = "Weight (kg)",
-                    value = "70"
-                  ),
-                  radioButtons(
-                    inputId = "serving_size",
-                    label = "Serving size of food",
-                    choices = c("Use standard serving sizes", "Choose your own serving"),
-                    selected = "Use standard serving sizes"
-                  ),
-                  conditionalPanel(
-                    condition = "input.serving_size == 'Choose your own serving'",
-                    numericInput(
-                      inputId = "serving_weight",
-                      label = "Serving size (g)",
-                      value = "100"
-                    )
-                  ),
-                  div(
-                    style = "background-color: #fff3cd; border-left: 5px solid #ffc107;
+              "Choose custom recommendations"
+            )),
+            selected = "RDA for Adults"
+          ),
+          conditionalPanel(condition = "input.EAA_rec == 'Choose custom recommendations'",
+                           fluidRow(
+                             column(
+                               4,
+                               numericInput(
+                                 inputId = "his",
+                                 label = "His (mg/kg/d)",
+                                 value = "14",
+                                 width = '90px'
+                               ),
+                               numericInput(
+                                 inputId = "leu",
+                                 label = "Leu (mg/kg/d)",
+                                 value = "19",
+                                 width = '90px'
+                               ),
+                               numericInput(
+                                 inputId = "ile",
+                                 label = "Ile (mg/kg/d)",
+                                 value = "42",
+                                 width = '90px'
+                               )
+                             ),
+                             column(
+                               4,
+                               numericInput(
+                                 inputId = "lys",
+                                 label = "Lys (mg/kg/d)",
+                                 value = "38",
+                                 width = '90px'
+                               ),
+                               numericInput(
+                                 inputId = "met_cys",
+                                 label = "Met+Cys (mg/kg/d)",
+                                 value = "19",
+                                 width = '90px'
+                               ),
+                               numericInput(
+                                 inputId = "phe_tyr",
+                                 label = "Phe+Tyr (mg/kg/d)",
+                                 value = "33",
+                                 width = '90px'
+                               )
+                             ),
+                             column(
+                               4,
+                               numericInput(
+                                 inputId = "thr",
+                                 label = "Thr (mg/kg/d)",
+                                 value = "20",
+                                 width = '90px'
+                               ),
+                               numericInput(
+                                 inputId = "trp",
+                                 label = "Trp (mg/kg/d)",
+                                 value = "5",
+                                 width = '90px'
+                               ),
+                               numericInput(
+                                 inputId = "val",
+                                 label = "Val (mg/kg/d)",
+                                 value = "24",
+                                 width = '90px'
+                               )
+                             )
+                           )),
+          conditionalPanel(
+            condition = "input.EAA_rec!='Choose custom recommendations'",
+            pickerInput(
+              inputId = "rec_age",
+              label = "Age",
+              choices = unique(scoring_pattern$Age)
+            )
+          ),
+          numericInput(
+            inputId = "weight",
+            label = "Weight (kg)",
+            value = "70"
+          ),
+          radioButtons(
+            inputId = "serving_size",
+            label = "Serving size of food",
+            choices = c("Use standard serving sizes", "Choose your own serving"),
+            selected = "Use standard serving sizes"
+          ),
+          conditionalPanel(
+            condition = "input.serving_size == 'Choose your own serving'",
+            numericInput(
+              inputId = "serving_weight",
+              label = "Serving size (g)",
+              value = "100"
+            )
+          ),
+          div(
+            style = "background-color: #fff3cd; border-left: 5px solid #ffc107;
            padding: 1px 8px; margin: 5px 0; border-radius: 5px;
            font-weight: bold; font-size: 14px; color: #856404; max-width:97%;",
            checkboxInput(
@@ -499,479 +546,548 @@ ui <- fluidPage(
              label = "Require correction factor for calculation",
              value = FALSE
            )
-                  ),
+          ),
 
-           uiOutput("eaa9_note"),
+          uiOutput("eaa9_note"),
 
 
-                )
-              )
-            )
-          ),
-          fluidRow(
-            p("Correction Factors", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -4px;margin-top:20px;"),
-            fluidRow(
-              style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 10px;",
-              column(
-                2,
-                checkboxGroupInput(
-                  inputId = "pq_species",
-                  label = "Species",
-                  choices = c("human", "human (predicted from swine)", "swine", "rat")
-                )
-              ),
-              column(
-                2,
-                checkboxGroupInput(
-                  inputId = "pq_sample",
-                  label = "Sample Location",
-                  choices = c(unique(
-                    as.character(Protein_Correction$`Sample Location`)
-                  ))
-                )
-              ),
-              column(
-                2,
-                checkboxGroupInput(
-                  inputId = "pq_analyte",
-                  label = "Protein Form",
-                  choices = c("crude protein", "individual amino acids")
-                )
-              ),
-              column(
-                2,
-                checkboxGroupInput(
-                  inputId = "pq_measure",
-                  label = "Calculation",
-                  choices = c(unique(
-                    as.character(Protein_Correction$Calculation)
-                  ))
-                )
-              )
-            )
-
-          )
-        ),
-        fluidRow(br()),
-        # Create download button
-        fluidRow(
-          style = "float: right;",
-          dropdownButton(
-            label = "Download",
-            circle = FALSE,
-            status = "secondary",
-            icon = icon("download"),
-            tags$div(
-              downloadButton(
-                "download_csv_PQ",
-                "CSV",
-                class = "btn btn-secondary",
-                icon = icon("file-csv")
-              ),
-              downloadButton(
-                "download_excel_PQ",
-                "Excel",
-                class = "btn btn-secondary",
-                icon = icon("file-excel")
-              )
-            )
-          )
-        ),
-        # Create a new row for the table.
-        fluidRow(style = "padding-top: -20px;",
-                 DT::dataTableOutput("table_2"))
-      ),
-      nav_panel(
-        "Correction Factors",
-        fluidRow(
-          div(
-            id = "info-toggle",
-            class = "accordion-toggle",
-            onclick = "if (event.target === this || event.target.tagName === 'P' || event.target.className.includes('column')) { Shiny.setInputValue('info_toggle_click', Math.random(), {priority: 'event'}); }",
-            column(
-              8,
-              p("Definitions and Calculations", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
-            ),
-            column(4, uiOutput("toggleButton"))
-          )
-        ),
-        fluidRow(hidden(
-          div(
-            id = "infoContent",
-            class = "accordion-content",
-            style = "background-color: #F6F6F6;padding-left: 30px;padding-right: 20px; padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
-            p(
-              "The Protein Quality Hub Project serves as a dedicated repository for information on protein bioavailability correction factors, addressing a critical gap in accessible data. For more information see the Protein Quality Hub ",
-              a(href = "https://github.com/NutrientInstitute/protein-quality-hub", "github page."),
-              " Please contact ",
-              a(href = "https://www.nutrientinstitute.org/protein-digestibility-feedback", "Nutrient Institute"),
-              "to report problems or provide feedback."
-            ),
-            br(),
-            p(
-              "Currently, the Protein Quality Hub contains correction factors from the following sources:"
-            ),
-            tags$ul(
-              tags$li(
-                a(
-                  href = "https://www.ars.usda.gov/arsuserfiles/80400535/data/classics/usda%20handbook%2074.pdf",
-                  "USDA ENERGY VALUE OF FOODS (Agricultural Handbook No. 74, 1955)"
-                )
-              ),
-              tags$li(
-                "AMINO-ACID CONTENT OF FOODS AND BIOLOGICAL DATA ON PROTEINS (FAO 1970) ",
-                br(),
-                tags$small(
-                  tags$i(
-                    "(",
-                    tags$b("Note"),
-                    ": The original publication has been removed from the FAO website, but can still be accessed via the ",
-                    tags$a(href = "https://web.archive.org/web/20231125115519/https://www.fao.org/3/ac854t/AC854T00.htm", "Wayback Machine"),
-                    ")"
-                  )
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://www.fao.org/ag/humannutrition/36216-04a2f02ec02eafd4f457dd2c9851b4c45.pdf",
-                  "Report of a Sub-Committee of the 2011 FAO Consultation on 'Protein Quality Evaluation in Human Nutrition'"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.17226/13298",
-                  "Nutrient Requirements of Swine: Eleventh Revised Edition (NRC 2012)",
-                  tags$b("**")
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://books.google.com/books?id=ieEEPqffcxEC&lpg=PP1&pg=PP1#v=onepage&q&f=false ISBN: 92-5-103097-9",
-                  "Protein quality Evaluation: Report of Joint FAO/WHO Expert Consultation (FAO 1991)"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.1093/jn/137.8.1874",
-                  "Application of the indicator amino acid oxidation technique for the determination of metabolic availability of sulfur amino acids from casein versus soy protein isolate in adult men (Humayun et al. 2007)"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.3945/jn.112.166728",
-                  "Lysine from cooked white rice consumed by healthy young men is highly metabolically available when assessed using the indicator amino acid oxidation technique (Prolla et al. 2013)"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.1093/jn/nxaa086",
-                  "Bioavailable Methionine Assessed Using the Indicator Amino Acid Oxidation Method Is Greater When Cooked Chickpeas and Steamed Rice Are Combined in Healthy Young Men (Rafii et al. 2020)"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.1093/jn/nxaa227",
-                  "Bioavailable Lysine, Assessed in Healthy Young Men Using Indicator Amino Acid Oxidation, is Greater when Cooked Millet and Stewed Canadian Lentils are Combined (Fakiha et al. 2020)"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.1093/jn/nxab410",
-                  "Bioavailable Lysine Assessed Using the Indicator Amino Acid Oxidation Method in Healthy Young Males is High when Sorghum is Cooked by a Moist Cooking Method (Paoletti et al. 2022)"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.1093/jn/nxy039",
-                  "Metabolic Availability of the Limiting Amino Acids Lysine and Tryptophan in Cooked White African Cornmeal Assessed in Healthy Young Men Using the Indicator Amino Acid Oxidation Technique (Rafii et al. 2018)"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.1093/jn/nxy039",
-                  "Lysine Bioavailability in School-Age Children Consuming Rice Is Reduced by Starch Retrogradation (Caballero et al. 2020)"
-                )
-              ),
-              tags$li(
-                a(
-                  href = "https://doi.org/10.1093/jn/nxy039",
-                  "Metabolic Availability of Methionine Assessed Using Indicator Amino Acid Oxidation Method, Is Greater when Cooked Lentils and Steamed Rice Are Combined in the Diet of Healthy Young Men (Rafii et al. 2022)"
-                )
-              )
-            ),
-            br(),
-            tags$small(
-              p(
-                tags$b("**"),
-                "Digestibility and protein data from ",
-                tags$i(
-                  "Nutrient Requirements of Swine: Eleventh Revised Edition (NRC 2012)"
-                ),
-                "  was collected from the following sources:"
-              ),
-              tags$ol(
-                tags$li(
-                  "AAFCO (Association of American Feed Control Officials). 2010. Official Publication. Oxford, IN: AAFCO."
-                ),
-                tags$li("AminoDat 4.0. 2010. Evonik Industries, Hanau, Germany."),
-                tags$li(
-                  "Cera, K. R., D. C. Mahan, and G. A. Reinhart. 1989. Apparent fat digestibilities and performance responses of postweaning swine fed diets supplemented with coconut oil, corn oil or tallow. Journal of Animal Science 67:2040-2047."
-                ),
-                tags$li(
-                  "CVB (Dutch PDV [Product Board Animal Feed]). 2008. CVB Feedstuff Database. Available online at http://www.pdv.nl/english/Voederwaardering/about_cvb/index.php. Accessed on June 9, 2011."
-                ),
-                tags$li(
-                  "NRC (National Research Council). 1998. Nutrient Requirements of Swine, 10th Rev. Ed. Washington, DC: National Academy Press."
-                ),
-                tags$li(
-                  "NRC. 2007. Nutrient Requirements of Horses, 6th Rev. Ed. Washington, DC: The National Academies Press."
-                ),
-                tags$li(
-                  "Powles, J., J. Wiseman, D. J. A. Cole, and S. Jagger. 1995. Prediction of the apparent digestible energy value of fats given to pigs. Animal Science 61:149-154."
-                ),
-                tags$li(
-                  "Sauvant, D., J. M. Perez, and G. Tran. 2004. Tables of Composition and Nutritional Value of Feed Materials: Pigs, Poultry, Sheep, Goats, Rabbits, Horses, Fish, INRA, Paris, France, ed. Wageningen, the Netherlands: Wageningen Academic."
-                ),
-                tags$li(
-                  "USDA (U.S. Department of Agriculture), Agricultural Research Service. 2010. USDA National Nutrient Database for Standard Reference, Release 23. Nutrient Data Laboratory Home Page. Available online at http://www.ars.usda.gov/ba/bhnrc/ndl. Accessed on August 10, 2011."
-                ),
-                tags$li(
-                  "van Milgen, J., J. Noblet, and S. Dubois. 2001. Energetic efficiency of starch, protein, and lipid utilization in growing pigs. Journal of Nutrition 131:1309-1318."
-                )
-              )
-            )
-          )
-        )),
-        fluidRow(br()),
-        # Create a new Row in the UI for search options
-        fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
-                 column(
-                   2,
-                   p("Search", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
-                 )),
-        fluidRow(style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 10px; padding-top: 10px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
-                 column(
-                   6,
-                   textInput(
-                     inputId = "search_tab2",
-                     label = "",
-                     placeholder = "Search the Hub...",
-                     width = '100%'
-                   )
-                 )),
-        fluidRow(br()),
-        # Create a new Row in the UI for selectInputs
-        fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
-                 column(
-                   2,
-                   p("Filters", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
-                 )),
-        fluidRow(
-          style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
-          column(
-            2,
-            virtualSelectInput(
-              inputId = "model",
-              label = "Model:",
-              choices = c("in vivo", "in vitro"),
-              selected = c(unique(as.character(
-                Protein_Correction$Model
-              ))),
-              multiple = TRUE,
-              showValueAsTags = TRUE,
-              width = '100%'
-            )
-          ),
-          column(
-            2,
-            virtualSelectInput(
-              inputId = "species",
-              label = "Species:",
-              choices = c("human", "human (predicted from swine)", "swine", "rat"),
-              selected = c(unique(
-                as.character(Protein_Correction$Species)
-              )),
-              multiple = TRUE,
-              showValueAsTags = TRUE,
-              width = '100%'
-            )
-          ),
-          column(
-            2,
-            virtualSelectInput(
-              inputId = "sample",
-              label = "Sample Location:",
-              choices = c(unique(
-                as.character(Protein_Correction$`Sample Location`)
-              )),
-              selected = c(unique(
-                as.character(Protein_Correction$`Sample Location`)
-              )),
-              multiple = TRUE,
-              showValueAsTags = TRUE,
-              width = '100%'
-            )
-          ),
-          column(
-            4,
-            virtualSelectInput(
-              inputId = "analyte",
-              label = "Protein Form:",
-              choices = list(
-                "crude protein" = "crude protein",
-                "Essential amino acid" = c(
-                  "histidine",
-                  "isoleucine",
-                  "leucine",
-                  "lysine",
-                  "reactive lysine",
-                  "methionine",
-                  "phenylalanine",
-                  "threonine",
-                  "tryptophan",
-                  "valine"
-                ),
-                "Conditionally essential amino acid" = c("arginine", "cysteine", "glycine", "proline", "tyrosine"),
-                "Non-essential amino acid" = c("alanine", "aspartic acid", "glutamic acid",  "serine")
-              ),
-              selected = unique(as.character(Protein_Correction$`Protein Form`)),
-              showValueAsTags = TRUE,
-              multiple = TRUE,
-              width = '100%'
-            )
-          ),
-          column(
-            2,
-            virtualSelectInput(
-              inputId = "measure",
-              label = "Calculation:",
-              choices = c(unique(
-                as.character(Protein_Correction$Calculation)
-              )),
-              selected = c(unique(
-                as.character(Protein_Correction$Calculation)
-              )),
-              multiple = TRUE,
-              showValueAsTags = TRUE,
-              width = '100%'
-            )
-          )
-        ),
-        fluidRow(br()),
-        # Create download button
-        fluidRow(
-          style = "float: right;",
-          dropdownButton(
-            label = "Download",
-            circle = FALSE,
-            status = "secondary",
-            icon = icon("download"),
-            tags$div(
-              downloadButton(
-                "download_csv_bv",
-                "CSV",
-                class = "btn btn-secondary",
-                icon = icon("file-csv")
-              ),
-              downloadButton(
-                "download_excel_bv",
-                "Excel",
-                class = "btn btn-secondary",
-                icon = icon("file-excel")
-              )
-            )
-          )
-        ),
-        # Create a new row for the table.
-        fluidRow(style = "padding-top: 20px;",
-                 DT::dataTableOutput("table"))
-      ),
-      nav_panel(
-        "EAA Composition Data",
-        fluidRow(
-          div(
-            id = "info-toggle_3",
-            class = "accordion-toggle",
-            onclick = "if (event.target === this || event.target.tagName === 'P' || event.target.className.includes('column')) { Shiny.setInputValue('info_toggle_3_click', Math.random(), {priority: 'event'}); }",
-            column(
-              8,
-              p("Definitions and Calculations", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
-            ),
-            column(4, uiOutput("toggleButton_3"))
-          )
-        ),
-        fluidRow(hidden(
-          div(
-            id = "infoContent_3",
-            class = "accordion-content",
-            style = "background-color: #F6F6F6;padding-left: 30px;padding-right: 20px; padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
-            p(
-              "In this tab, you will find the food composition data collected for use in protein quality scoring."
-            ),
-            br()
-          )
-        )),
-        fluidRow(br()),
-        # Create a new Row in the UI for search options
-        fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
-                 column(
-                   2,
-                   p("Search", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
-                 )),
-        fluidRow(style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 10px; padding-top: 10px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
-                 column(
-                   6,
-                   textInput(
-                     inputId = "search_tab3",
-                     label = "",
-                     placeholder = "Search the Hub...",
-                     width = '100%'
-                   )
-                 )),
-        fluidRow(br()),
-        # Create download button
-        fluidRow(
-          style = "float: right;",
-          dropdownButton(
-            label = "Download",
-            circle = FALSE,
-            status = "secondary",
-            icon = icon("download"),
-            tags$div(
-              downloadButton(
-                "download_csv_eaa",
-                "CSV",
-                class = "btn btn-secondary",
-                icon = icon("file-csv")
-              ),
-              downloadButton(
-                "download_excel_eaa",
-                "Excel",
-                class = "btn btn-secondary",
-                icon = icon("file-excel")
-              )
-            )
-          )
-        ),
-        fluidRow(style = "float: right;",
-                 div(
-                   style = "font-size: 1.2em;",
-                   prettyToggle(
-                     inputId = "show_NI_ID",
-                     label_on = "Hide NI_ID",
-                     icon_on = icon("square-minus"),
-                     status_on = "default",
-                     status_off = "default",
-                     label_off = "Show NI_ID",
-                     icon_off = icon("square-plus"),
-                     bigger = TRUE,
-                     shape = "curve"
-                   )
-                 )),
-        # Create a new row for the table.
-        fluidRow(style = "padding-top: 20px;",
-                 DT::dataTableOutput("table_3"))
+        )
       )
+    )
+  ),
+  fluidRow(
+    p("Correction Factors", style = "font-size: 15px;font-weight: 500;color: #808080;margin-bottom: -2px;margin-top:10px;"),
+    fluidRow(
+      style = "border: 1px solid #bdbdbd;margin: auto;margin-right: 25px;padding: 7px; background-color: #F2F2F2;",
+      column(
+        2,
+        checkboxGroupInput(
+          inputId = "pq_species",
+          label = "Species",
+          choices = c("human", "human (predicted from swine)", "swine", "rat")
+        )
+      ),
+      column(
+        2,
+        checkboxGroupInput(
+          inputId = "pq_sample",
+          label = "Sample Location",
+          choices = c("fecal", "ileal")
+        )
+      ),
+      column(
+        2,
+        checkboxGroupInput(
+          inputId = "pq_analyte",
+          label = "Protein Form",
+          choices = c("crude protein", "individual amino acids")
+        )
+      ),
+      column(
+        2,
+        checkboxGroupInput(
+          inputId = "pq_measure",
+          label = "Calculation",
+          choices = c(
+            "true digestibility",
+            "apparent digestibility",
+            "standardized digestibility"
+          )
+        )
+      )
+    )
+
+  )
+),
+fluidRow(br()),
+# Create download button
+fluidRow(
+  style = "float: right;",
+  dropdownButton(
+    label = "Download",
+    circle = FALSE,
+    status = "secondary",
+    icon = icon("download"),
+    tags$div(
+      downloadButton(
+        "download_csv_PQ",
+        "CSV",
+        class = "btn btn-secondary",
+        icon = icon("file-csv")
+      ),
+      downloadButton(
+        "download_excel_PQ",
+        "Excel",
+        class = "btn btn-secondary",
+        icon = icon("file-excel")
+      )
+    )
+  )
+),
+# Create a new row for the table.
+fluidRow(style = "padding-top: -20px;",
+         DT::dataTableOutput("table_2"))
+      ),
+nav_panel(
+  "Correction Factors",
+  fluidRow(
+    div(
+      id = "info-toggle",
+      class = "accordion-toggle",
+      onclick = "if (event.target === this || event.target.tagName === 'P' || event.target.className.includes('column')) { Shiny.setInputValue('info_toggle_click', Math.random(), {priority: 'event'}); }",
+      column(
+        8,
+        p("Definitions and Calculations", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
+      ),
+      column(4, uiOutput("toggleButton"))
+    )
+  ),
+  fluidRow(hidden(
+    div(
+      id = "infoContent",
+      class = "accordion-content",
+      style = "background-color: #F6F6F6;padding-left: 30px;padding-right: 20px; padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
+      p(
+        "The diverse data on the digestibility and bioavailability of protein and amino acids are integrated into this hub under the naming scheme \"Correction Factors,\" consistent with FAO nomenclature \"correction for amino acid digestibility and availability\"."
+      ),
+      p(
+        "The Protein Quality Hub Project serves as a dedicated repository for information on protein bioavailability correction factors, addressing a critical gap in accessible data. For more information see the Protein Quality Hub ",
+        a(href = "https://github.com/NutrientInstitute/protein-quality-hub", "github page."),
+        " Please contact ",
+        a(href = "https://www.nutrientinstitute.org/protein-digestibility-feedback", "Nutrient Institute"),
+        "to report problems or provide feedback."
+      ),
+      br(),
+      p(
+        "Currently, the Protein Quality Hub contains correction factors from the following sources:"
+      ),
+      tags$ul(
+        tags$li(
+          a(
+            href = "https://www.ars.usda.gov/arsuserfiles/80400535/data/classics/usda%20handbook%2074.pdf",
+            "USDA ENERGY VALUE OF FOODS (Agricultural Handbook No. 74, 1955)"
+          )
+        ),
+        tags$li(
+          "AMINO-ACID CONTENT OF FOODS AND BIOLOGICAL DATA ON PROTEINS (FAO 1970) ",
+          br(),
+          tags$small(
+            tags$i(
+              "(",
+              tags$b("Note"),
+              ": The original publication has been removed from the FAO website, but can still be accessed via the ",
+              tags$a(href = "https://web.archive.org/web/20231125115519/https://www.fao.org/3/ac854t/AC854T00.htm", "Wayback Machine"),
+              ")"
+            )
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://www.fao.org/ag/humannutrition/36216-04a2f02ec02eafd4f457dd2c9851b4c45.pdf",
+            "Report of a Sub-Committee of the 2011 FAO Consultation on 'Protein Quality Evaluation in Human Nutrition'"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.17226/13298",
+            "Nutrient Requirements of Swine: Eleventh Revised Edition (NRC 2012)",
+            tags$b("**")
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://books.google.com/books?id=ieEEPqffcxEC&lpg=PP1&pg=PP1#v=onepage&q&f=false ISBN: 92-5-103097-9",
+            "Protein quality Evaluation: Report of Joint FAO/WHO Expert Consultation (FAO 1991)"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.1093/jn/137.8.1874",
+            "Application of the indicator amino acid oxidation technique for the determination of metabolic availability of sulfur amino acids from casein versus soy protein isolate in adult men (Humayun et al. 2007)"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.3945/jn.112.166728",
+            "Lysine from cooked white rice consumed by healthy young men is highly metabolically available when assessed using the indicator amino acid oxidation technique (Prolla et al. 2013)"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.1093/jn/nxaa086",
+            "Bioavailable Methionine Assessed Using the Indicator Amino Acid Oxidation Method Is Greater When Cooked Chickpeas and Steamed Rice Are Combined in Healthy Young Men (Rafii et al. 2020)"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.1093/jn/nxaa227",
+            "Bioavailable Lysine, Assessed in Healthy Young Men Using Indicator Amino Acid Oxidation, is Greater when Cooked Millet and Stewed Canadian Lentils are Combined (Fakiha et al. 2020)"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.1093/jn/nxab410",
+            "Bioavailable Lysine Assessed Using the Indicator Amino Acid Oxidation Method in Healthy Young Males is High when Sorghum is Cooked by a Moist Cooking Method (Paoletti et al. 2022)"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.1093/jn/nxy039",
+            "Metabolic Availability of the Limiting Amino Acids Lysine and Tryptophan in Cooked White African Cornmeal Assessed in Healthy Young Men Using the Indicator Amino Acid Oxidation Technique (Rafii et al. 2018)"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.1093/jn/nxy039",
+            "Lysine Bioavailability in School-Age Children Consuming Rice Is Reduced by Starch Retrogradation (Caballero et al. 2020)"
+          )
+        ),
+        tags$li(
+          a(
+            href = "https://doi.org/10.1093/jn/nxy039",
+            "Metabolic Availability of Methionine Assessed Using Indicator Amino Acid Oxidation Method, Is Greater when Cooked Lentils and Steamed Rice Are Combined in the Diet of Healthy Young Men (Rafii et al. 2022)"
+          )
+        )
+      ),
+      br(),
+      tags$small(
+        p(
+          tags$b("**"),
+          "Digestibility and protein data from ",
+          tags$i(
+            "Nutrient Requirements of Swine: Eleventh Revised Edition (NRC 2012)"
+          ),
+          "  was collected from the following sources:"
+        ),
+        tags$ol(
+          tags$li(
+            "AAFCO (Association of American Feed Control Officials). 2010. Official Publication. Oxford, IN: AAFCO."
+          ),
+          tags$li("AminoDat 4.0. 2010. Evonik Industries, Hanau, Germany."),
+          tags$li(
+            "Cera, K. R., D. C. Mahan, and G. A. Reinhart. 1989. Apparent fat digestibilities and performance responses of postweaning swine fed diets supplemented with coconut oil, corn oil or tallow. Journal of Animal Science 67:2040-2047."
+          ),
+          tags$li(
+            "CVB (Dutch PDV [Product Board Animal Feed]). 2008. CVB Feedstuff Database. Available online at http://www.pdv.nl/english/Voederwaardering/about_cvb/index.php. Accessed on June 9, 2011."
+          ),
+          tags$li(
+            "NRC (National Research Council). 1998. Nutrient Requirements of Swine, 10th Rev. Ed. Washington, DC: National Academy Press."
+          ),
+          tags$li(
+            "NRC. 2007. Nutrient Requirements of Horses, 6th Rev. Ed. Washington, DC: The National Academies Press."
+          ),
+          tags$li(
+            "Powles, J., J. Wiseman, D. J. A. Cole, and S. Jagger. 1995. Prediction of the apparent digestible energy value of fats given to pigs. Animal Science 61:149-154."
+          ),
+          tags$li(
+            "Sauvant, D., J. M. Perez, and G. Tran. 2004. Tables of Composition and Nutritional Value of Feed Materials: Pigs, Poultry, Sheep, Goats, Rabbits, Horses, Fish, INRA, Paris, France, ed. Wageningen, the Netherlands: Wageningen Academic."
+          ),
+          tags$li(
+            "USDA (U.S. Department of Agriculture), Agricultural Research Service. 2010. USDA National Nutrient Database for Standard Reference, Release 23. Nutrient Data Laboratory Home Page. Available online at http://www.ars.usda.gov/ba/bhnrc/ndl. Accessed on August 10, 2011."
+          ),
+          tags$li(
+            "van Milgen, J., J. Noblet, and S. Dubois. 2001. Energetic efficiency of starch, protein, and lipid utilization in growing pigs. Journal of Nutrition 131:1309-1318."
+          )
+        )
+      ),
+      br(),
+      p(style = "font-weight:strong; font-size:120%; ", "Column Definitions:"),
+      HTML(
+        "
+<table style=\"width:100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 30px;\">
+  <thead>
+    <tr>
+      <th style=\"border: 1px solid #ccc; padding: 8px; background-color: #f0f0f0;\">Variable Name</th>
+      <th style=\"border: 1px solid #ccc; padding: 8px; background-color: #f0f0f0;\">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">NI_ID</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Unique Nutrient Institute (NI) identifier for each correction factor data point.</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Food group <span style=\"font-style: italic; color: #888; font-size: 90%;\">(not in table - available in <a href='https://github.com/NutrientInstitute/protein-quality-hub' target='_blank' style=\"color: #3b6ea5; text-decoration: underline;\">github</a>)</span></td><td style=\"border: 1px solid #ccc; padding: 8px;\">Food group as specified by the data source from which the correction factor data was collected</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Food</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Description of the food used in correction factor analysis</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Correction Factor (%)</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Value of the associated correction factor measure, expressed as a percentage</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Correction Factor SD</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Standard deviation of the provided value</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Species</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Target species of correction factor analysis</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Sample Location</td><td style=\"border: 1px solid #ccc; padding: 8px;\">The type  or location of sample collected for analysis (e.g. ileal, fecal, etc...)</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Calculation</td><td style=\"border: 1px solid #ccc; padding: 8px;\">The name of the correction factor (i.e. apparent digestibility, metabolic availability, etc...)</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Protein Form</td><td style=\"border: 1px solid #ccc; padding: 8px;\">The protein or amino acid for which correction factor coefficient is provided</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Model</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Experimental model (either in vivo or in vitro)</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Protein (g)</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Amount of protein (in grams) from the applicable food ingested (in the case of in vivo analysis) or analyzed (in the case of in vitro analysis)</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">n</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Number of subjects from which in vivo data was collected (if applicable)</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Analysis method(s)</td><td style=\"border: 1px solid #ccc; padding: 8px;\">Name of the analysis method(s), technique(s), or assay(s) used to measure bioavailability, as specified in the source the data was collected from</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Data Collection Source</td><td style=\"border: 1px solid #ccc; padding: 8px;\">A citation indicating where the data appearing in this table was collected from - citations created using <a href='https://www.nutrientinstitute.org/cfdc' target='_blank' style=\"color: #3b6ea5; text-decoration: underline;\">CDFC Citation Generator</a></td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Original Data Source(s)</td><td style=\"border: 1px solid #ccc; padding: 8px;\">A citation or list of ordered citations indicating the original source(s) of the correction factor data (as cited in the source data was collected from).</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Notes <span style=\"font-style: italic; color: #888; font-size: 90%;\">(not in table - available in <a href='https://github.com/NutrientInstitute/protein-quality-hub' target='_blank' style=\"color: #3b6ea5; text-decoration: underline;\">github</a>)</span></td><td style=\"border: 1px solid #ccc; padding: 8px;\">Any additional notes or comments applicable to the collected data that are provided in the source data has been collected from.</td></tr>
+    <tr><td style=\"border: 1px solid #ccc; padding: 8px;\">Diet <span style=\"font-style: italic; color: #888; font-size: 90%;\">(not in table - available in <a href='https://github.com/NutrientInstitute/protein-quality-hub' target='_blank' style=\"color: #3b6ea5; text-decoration: underline;\">github</a>)</span></td><td style=\"border: 1px solid #ccc; padding: 8px;\">Description of the diet consumed by experimental subjects</td></tr>
+  </tbody>
+</table>
+"
+      )
+
+
+    )
+  )),
+fluidRow(br()),
+# Create a new Row in the UI for search options
+fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
+         column(
+           2,
+           p("Search", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
+         )),
+fluidRow(style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 10px; padding-top: 10px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
+         column(
+           6,
+           textInput(
+             inputId = "search_tab2",
+             label = "",
+             placeholder = "Search the Hub (e.g. beans, chicken, cheese ...)",
+             width = '100%'
+           )
+         )),
+fluidRow(br()),
+# Create a new Row in the UI for selectInputs
+fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
+         column(
+           2,
+           p("Filters", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
+         )),
+fluidRow(
+  style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
+  column(
+    2,
+    virtualSelectInput(
+      inputId = "model",
+      label = "Model:",
+      choices = c("in vivo", "in vitro"),
+      selected = c(unique(as.character(
+        Protein_Correction$Model
+      ))),
+      multiple = TRUE,
+      showValueAsTags = TRUE,
+      width = '100%'
+    )
+  ),
+  column(
+    2,
+    virtualSelectInput(
+      inputId = "species",
+      label = "Species:",
+      choices = c("human", "human (predicted from swine)", "swine", "rat"),
+      selected = c(unique(
+        as.character(Protein_Correction$Species)
+      )),
+      multiple = TRUE,
+      showValueAsTags = TRUE,
+      width = '100%'
+    )
+  ),
+  column(
+    2,
+    virtualSelectInput(
+      inputId = "sample",
+      label = "Sample Location:",
+      choices = c(unique(
+        as.character(Protein_Correction$`Sample Location`)
+      )),
+      selected = c(unique(
+        as.character(Protein_Correction$`Sample Location`)
+      )),
+      multiple = TRUE,
+      showValueAsTags = TRUE,
+      width = '100%'
+    )
+  ),
+  column(
+    4,
+    virtualSelectInput(
+      inputId = "analyte",
+      label = "Protein Form:",
+      choices = list(
+        "crude protein" = "crude protein",
+        "Essential amino acid" = c(
+          "histidine",
+          "isoleucine",
+          "leucine",
+          "lysine",
+          "reactive lysine",
+          "methionine",
+          "phenylalanine",
+          "threonine",
+          "tryptophan",
+          "valine"
+        ),
+        "Conditionally essential amino acid" = c("arginine", "cysteine", "glycine", "proline", "tyrosine"),
+        "Non-essential amino acid" = c("alanine", "aspartic acid", "glutamic acid",  "serine")
+      ),
+      selected = unique(as.character(Protein_Correction$`Protein Form`)),
+      showValueAsTags = TRUE,
+      multiple = TRUE,
+      width = '100%'
+    )
+  ),
+  column(
+    2,
+    virtualSelectInput(
+      inputId = "measure",
+      label = "Calculation:",
+      choices = c(unique(
+        as.character(Protein_Correction$Calculation)
+      )),
+      selected = c(unique(
+        as.character(Protein_Correction$Calculation)
+      )),
+      multiple = TRUE,
+      showValueAsTags = TRUE,
+      width = '100%'
+    )
+  ),
+  column(12,
+         uiOutput("IAAO_note"))
+),
+fluidRow(br()),
+# Create download button
+fluidRow(
+  style = "float: right;",
+  dropdownButton(
+    label = "Download",
+    circle = FALSE,
+    status = "secondary",
+    icon = icon("download"),
+    tags$div(
+      downloadButton(
+        "download_csv_bv",
+        "CSV",
+        class = "btn btn-secondary",
+        icon = icon("file-csv")
+      ),
+      downloadButton(
+        "download_excel_bv",
+        "Excel",
+        class = "btn btn-secondary",
+        icon = icon("file-excel")
+      )
+    )
+  )
+),
+# Create a new row for the table.
+fluidRow(style = "padding-top: 20px;",
+         DT::dataTableOutput("table"))
+),
+nav_panel(
+  "EAA Composition Data",
+  fluidRow(
+    div(
+      id = "info-toggle_3",
+      class = "accordion-toggle",
+      onclick = "if (event.target === this || event.target.tagName === 'P' || event.target.className.includes('column')) { Shiny.setInputValue('info_toggle_3_click', Math.random(), {priority: 'event'}); }",
+      column(
+        8,
+        p("Definitions and Calculations", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
+      ),
+      column(4, uiOutput("toggleButton_3"))
+    )
+  ),
+  fluidRow(hidden(
+    div(
+      id = "infoContent_3",
+      class = "accordion-content",
+      style = "background-color: #F6F6F6;padding-left: 30px;padding-right: 20px; padding-bottom: 20px; padding-top: 20px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
+      p(
+        "In this tab, you will find the food composition data collected for use in protein quality scoring."
+      ),
+      br(),
+      p(style = "font-weight:strong; font-size:120%; ", "Column Definitions:"),
+      HTML(
+        '
+  <table style="width:100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 30px;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid #ccc; padding: 8px; background-color: #f0f0f0;">Variable Name(s)</th>
+        <th style="border: 1px solid #ccc; padding: 8px; background-color: #f0f0f0;">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">FDC_ID</td><td style="border: 1px solid #ccc; padding: 8px;">FoodData Central (FDC) identifier, used to map correction factors to food composition data from FoodData Central</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">NI_ID</td><td style="border: 1px solid #ccc; padding: 8px;">Unique Nutrient Institute (NI) identifier for each correction factor</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Food description</td><td style="border: 1px solid #ccc; padding: 8px;">Description of the food provided by the food composition data source</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Protein (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of protein per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">His (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of histidine per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Ile (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of isoleucine per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Leu (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of leucine per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Lys (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of lysine per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Met+Cys (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of methionine and cystine per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Phe+Tyr (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of phenylalanine and tyrosine per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Thr (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of threonine per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Trp (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of tryptophan per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Val (g/100g)</td><td style="border: 1px solid #ccc; padding: 8px;">Grams of valine per 100g of food</td></tr>
+      <tr><td style="border: 1px solid #ccc; padding: 8px;">Food Composition Data Ref</td><td style="border: 1px solid #ccc; padding: 8px;">A citation indicating where food composition data was collected - citations created using CDFC Citation Generator</td></tr>
+    </tbody>
+  </table>
+'
+      )
+    )
+  )),
+fluidRow(br()),
+# Create a new Row in the UI for search options
+fluidRow(style = "background-color: #dedede;padding-left: 20px;border: 0.5px solid #bdbdbd;font-weight: bold;",
+         column(
+           2,
+           p("Search", style = "font-weight: bold;font-size: 20px; padding-top:10px;")
+         )),
+fluidRow(style = "background-color: #F6F6F6;padding-left: 20px;padding-bottom: 10px; padding-top: 10px;border-left: 0.5px solid #bdbdbd;border-right: 0.5px solid #bdbdbd;border-bottom: 0.5px solid #bdbdbd;",
+         column(
+           6,
+           textInput(
+             inputId = "search_tab3",
+             label = "",
+             placeholder = "Search the Hub (e.g. beans, chicken, cheese ...)",
+             width = '100%'
+           )
+         )),
+fluidRow(br()),
+# Create download button
+fluidRow(
+  style = "float: right;",
+  dropdownButton(
+    label = "Download",
+    circle = FALSE,
+    status = "secondary",
+    icon = icon("download"),
+    tags$div(
+      downloadButton(
+        "download_csv_eaa",
+        "CSV",
+        class = "btn btn-secondary",
+        icon = icon("file-csv")
+      ),
+      downloadButton(
+        "download_excel_eaa",
+        "Excel",
+        class = "btn btn-secondary",
+        icon = icon("file-excel")
+      )
+    )
+  )
+),
+fluidRow(style = "float: right;",
+         div(
+           style = "font-size: 1.2em;",
+           prettyToggle(
+             inputId = "show_NI_ID",
+             label_on = "Hide NI_ID",
+             icon_on = icon("square-minus"),
+             status_on = "default",
+             status_off = "default",
+             label_off = "Show NI_ID",
+             icon_off = icon("square-plus"),
+             bigger = TRUE,
+             shape = "curve"
+           )
+         )),
+# Create a new row for the table.
+fluidRow(style = "padding-top: 20px;",
+         DT::dataTableOutput("table_3"))
+)
     )
   )
 )
@@ -1106,1091 +1222,14 @@ server <- function(input, output, session) {
     }
   })
 
-
-
-
-  # render table for protein correction factors
-  output$table <- DT::renderDataTable(server = TRUE, {
-    correction_factors <- Protein_Correction
-
-    if(input$search_tab2 != ""){
-      correction_factors <- correction_factors  %>%
-        filter_all(any_vars(grepl(input$search_tab2, ., ignore.case = TRUE)))
-
-    }
-
-    DT::datatable(
-      correction_factors %>%
-        mutate(n = as.character(n)) %>%
-        mutate(`Correction Factor SD` = as.character(`Correction Factor SD`)) %>%
-        mutate(`Protein (g)` = as.character(`Protein (g)`)) %>%
-        replace_na(
-          list(
-            Food = "not reported",
-            "Protein (g)" = "not reported",
-            n = "not reported",
-            "Correction Factor SD" = "not reported",
-            "Analysis method(s)" = "not reported",
-            "Original Data Source(s)" = "not reported"
-          )
-        ) %>%
-        filter(`Species` %in% input$species) %>%
-        filter(`Model` %in% input$model) %>%
-        filter(`Sample Location` %in% input$sample) %>%
-        filter(`Protein Form` %in% input$analyte) %>%
-        filter(Calculation %in% input$measure),
-      extensions = c('FixedHeader'),
-      class = "display cell-border compact",
-      rownames = FALSE,
-      options = list(
-        fixedHeader = TRUE,
-        dom = 'ltip',
-        pageLength = 25,
-        lengthMenu = c(25, 50, 75, 100),
-        columnDefs = list(# list(targets = "_all", className = "dt-head-nowrap"),
-          list(
-            targets = c(12, 13),
-            render = JS(
-              "function(data, type, row, meta) {",
-              "return type === 'display' && data.length > 100 ?",
-              "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
-              "}"
-            )
-          ))
-      ),
-      escape = FALSE  # Allow HTML rendering
-    )  %>%
-      formatStyle(1:14,
-                  'vertical-align' = 'top',
-                  'overflow-wrap' = 'break-word') %>%
-      formatStyle(12:13,
-                  'overflow-wrap' = 'break-word',
-                  'word-break' = 'break-word')
-  })
-
-  # render table for protein quality scores
-  output$table_2 <- DT::renderDataTable(server = TRUE, {
-    PQ_df <- data.frame(NI_ID = character())
-
-    if (!("EAA-9" %in% input$score |
-          "PDCAAS" %in% input$score | "DIAAS" %in% input$score)) {
-      DT::datatable(
-        data.frame(Message = "Please select scores above"),
-        rownames = FALSE,
-        options = list(
-          dom = 't',
-          # hides filter, pagination, etc.
-          ordering = FALSE,
-          paging = FALSE
-        )
-      )
-    } else {
-      if ("EAA-9" %in% input$score) {
-        if (input$EAA_rec == "Choose custom recommendations") {
-          scoring_pattern[199, ] <-
-            list(
-              "Choose custom recommendations",
-              "histidine",
-              ifelse(is.numeric(input$hist), input$hist, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-          scoring_pattern[200, ] <-
-            list(
-              "Choose custom recommendations",
-              "leucine",
-              ifelse(is.numeric(input$leu), input$leu, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-          scoring_pattern[201, ] <-
-            list(
-              "Choose custom recommendations",
-              "isoleucine",
-              ifelse(is.numeric(input$ile), input$ile, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-          scoring_pattern[202, ] <-
-            list(
-              "Choose custom recommendations",
-              "lysine",
-              ifelse(is.numeric(input$lys), input$lys, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-          scoring_pattern[203, ] <-
-            list(
-              "Choose custom recommendations",
-              "methionine+cysteine",
-              ifelse(is.numeric(input$met_cys), input$met_cys, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-          scoring_pattern[204, ] <-
-            list(
-              "Choose custom recommendations",
-              "phenylalanine+tyrosine",
-              ifelse(is.numeric(input$phe_tyr), input$phe_tyr, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-          scoring_pattern[205, ] <-
-            list(
-              "Choose custom recommendations",
-              "threonine",
-              ifelse(is.numeric(input$thr), input$thr, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-          scoring_pattern[206, ] <-
-            list(
-              "Choose custom recommendations",
-              "tryptophan",
-              ifelse(is.numeric(input$trp), input$trp, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-          scoring_pattern[207, ] <-
-            list(
-              "Choose custom recommendations",
-              "valine",
-              ifelse(is.numeric(input$val), input$val, 1),
-              "mg/kg/d",
-              "custom",
-              NA,
-              NA,
-              NA
-            )
-        }
-        if (input$require_bioavail == TRUE) {
-          EAA_composition <- EAA_composition %>%
-            drop_na(NI_ID)
-        }
-
-        if (input$serving_size == "Use standard serving sizes") {
-          EAA_9 <- EAA_composition %>%
-            left_join(
-              portion_sizes %>%
-                select(fdcId, g_weight , portion) %>%
-                mutate(fdcId = as.character(fdcId)) %>%
-                mutate(portion = paste0(portion, " (", g_weight, " g)"))
-            ) %>%
-            mutate(portion = ifelse(is.na(portion), "not provided (100 g)", portion)) %>%
-            mutate(g_weight = ifelse(is.na(g_weight), 100, g_weight)) %>%
-            mutate(value = value * 1000) %>%
-            mutate(value = value * (g_weight / 100))
-        } else{
-          EAA_9 <- EAA_composition %>%
-            mutate(value = value * 1000) %>%
-            mutate(value = value * (input$serving_weight / 100)) %>%
-            mutate(portion = paste0(input$serving_weight, " g"))
-        }
-
-        EAA_9 <- EAA_9 %>%
-          left_join(
-            scoring_pattern %>%
-              rename("AA" = "Analyte") %>%
-              filter(`Pattern Name` == input$EAA_rec) %>%
-              filter(ifelse(
-                is.character(input$rec_age),
-                Age == input$rec_age,
-                !is.na(Age)
-              )) %>%
-              select(AA, Amount)
-          ) %>%
-          mutate(calculation = paste0(round(value, 2),
-                                      "/",
-                                      round(Amount * input$weight, 2))) %>%
-          mutate(value = value / (Amount * input$weight)) %>%
-          select(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            portion,
-            value,
-            AA,
-            calculation,
-            `Food Composition Ref`
-          )
-
-        temp <- EAA_9 %>%
-          select(fdcId, NI_ID, `food description`, value, calculation) %>%
-          group_by(fdcId, NI_ID, `food description`) %>%
-          summarise(
-            calculation = paste0(
-              "min(",
-              str_c(calculation, collapse = ", "),
-              ") x 100 x Correction Factor \n = ",
-              paste0(min(round(value, 4))),
-              " x 100 x Correction Factor"
-            )
-          ) %>%
-          ungroup()
-
-        EAA_9 <- EAA_9 %>%
-          select(!calculation) %>%
-          left_join(temp) %>%
-          group_by(
-            fdcId,
-            `food identifier`,
-            `food description`,
-            Protein,
-            portion,
-            `Food Composition Ref`
-          ) %>%
-          mutate(`EAA-9` = min(value)) %>%
-          filter(value == `EAA-9`) %>%
-          ungroup() %>%
-          select(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            AA,
-            portion,
-            `EAA-9`,
-            calculation,
-            `Food Composition Ref`
-          ) %>%
-          rename("Limiting AA" = "AA") %>%
-          separate_longer_delim(NI_ID, delim = ";") %>%
-          mutate(NI_ID = str_trim(NI_ID)) %>%
-          left_join(
-            Protein_Correction %>%
-              select(
-                NI_ID,
-                Food,
-                `Correction Factor  (%)`,
-                Species,
-                `Protein Form`,
-                `Sample Location`,
-                Calculation,
-                `Data Collection Source`
-              ) %>%
-              mutate(Food = str_remove(Food, ", Average")) %>%
-              group_by(
-                Food,
-                Species,
-                `Protein Form`,
-                `Sample Location`,
-                Calculation,
-                `Data Collection Source`
-              ) %>%
-              summarise(
-                `Correction Factor  (%)` = round(sum(`Correction Factor  (%)`, na.rm = TRUE) /
-                                                   n(), 2),
-                NI_ID = paste0(NI_ID, collapse = "; ")
-              ) %>%
-              separate_longer_delim(NI_ID, delim = "; ") %>%
-              distinct()
-          ) %>%
-          replace_na(list("Data Collection Source" = "Not Available")) %>%
-          mutate(indicator = ifelse(
-            `Data Collection Source` == `Food Composition Ref`,
-            1,
-            ifelse(
-              str_detect(`Food Composition Ref`, "Standard Reference"),
-              2,
-              3
-            )
-          )) %>%
-          filter(!(
-            Calculation == "metabolic availability" &
-              !str_detect(`Food Composition Ref`, "Standard Reference")
-          )) %>%
-          group_by(`food identifier`) %>%
-          mutate(min_indicator = ifelse(
-            `Data Collection Source` == "Not Available",
-            2,
-            min(indicator, na.rm = TRUE)
-          )) %>%
-          ungroup() %>%
-          filter(indicator == min_indicator) %>%
-          select(!indicator) %>%
-          select(!min_indicator) %>%
-          mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
-          distinct() %>%
-          group_by(
-            Food,
-            Species,
-            `Protein Form`,
-            `Sample Location`,
-            Calculation,
-            `Data Collection Source`
-          ) %>%
-          mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
-          distinct() %>%
-          mutate(`EAA-9` = `EAA-9` * ifelse(!is.na(`Correction Factor  (%)`), (
-            as.numeric(`Correction Factor  (%)`) / 100
-          ), 1)) %>%
-          mutate(`EAA-9` = round(`EAA-9` * 100, 2)) %>%
-          mutate(calculation = ifelse(
-            is.na(`Correction Factor  (%)`),
-            gsub(" x Correction Factor", "", calculation),
-            calculation
-          )) %>%
-          mutate(calculation = paste0(calculation, " \n = ", `EAA-9`, "%")) %>%
-          filter(
-            ifelse(
-              !is.na(`Protein Form`),
-              `Protein Form` == "crude protein" |
-                `Limiting AA` == `Protein Form` |
-                (
-                  `Limiting AA` == "methionine+cysteine" &
-                    `Protein Form` == "methionine"
-                ) |
-                (
-                  `Limiting AA` == "phenylalanine+tyrosine" &
-                    `Protein Form` == "phenylalanine"
-                ) | (
-                  `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
-                ),
-              !is.na(`EAA-9`)
-            )
-          ) %>%
-          select(
-            NI_ID,
-            Food,
-            Species,
-            `Sample Location`,
-            `Protein Form`,
-            Calculation,
-            `Correction Factor  (%)`,
-            `Limiting AA`,
-            fdcId,
-            portion,
-            `EAA-9`,
-            calculation,
-            `Food Composition Ref`,
-            `Data Collection Source`
-          ) %>%
-          rename("serving size" = "portion") %>%
-          rename("EAA-9 (%)" = "EAA-9") %>%
-          mutate(`Correction Factor  (%)` = as.character(`Correction Factor  (%)`)) %>%
-          replace_na(
-            list(
-              NI_ID = "Not Available",
-              Calculation = "Not Available",
-              `Sample Location` = "Not Available",
-              `Protein Form` = "Not Available",
-              Species = "Not Available",
-              `Correction Factor  (%)` = "Not Available",
-              `Data Collection Source` = "Not Available"
-            )
-          ) %>%
-          distinct()
-
-        if (input$show_calc == "score_only") {
-          EAA_9 <- EAA_9 %>%
-            select(!calculation)
-        } else{
-          EAA_9 <- EAA_9 %>%
-            select(!`EAA-9 (%)`) %>%
-            rename("EAA-9 (%)" = "calculation")
-        }
-
-        if (length(input$score) != 1) {
-          PQ_df <- full_join(PQ_df, EAA_9)
-        } else{
-          PQ_df <- EAA_9
-        }
-
-      }
-
-      if (ifelse(length(input$score) != 1,
-                 "PDCAAS" %in% input$score,
-                 "PDCAAS" == input$score)) {
-        PDCAAS <- EAA_composition %>%
-          drop_na(Protein) %>%
-          drop_na(NI_ID) %>%
-          mutate(value = (value) / Protein) %>%
-          mutate(value = value * 1000) %>%
-          left_join(
-            scoring_pattern %>%
-              rename("AA" = "Analyte") %>%
-              filter(`Pattern Name` == input$EAA_rec_PDCAAS) %>%
-              filter(Age == input$rec_age_PDCAAS) %>%
-              select(AA, Amount)
-          ) %>%
-          mutate(calculation = paste0(round(value, 2), "/", Amount)) %>%
-          mutate(value = value / Amount) %>%
-          select(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            value,
-            AA,
-            calculation,
-            `Food Composition Ref`
-          )
-
-        temp_2 <- PDCAAS %>%
-          select(fdcId, NI_ID, `food description`, value, calculation) %>%
-          group_by(fdcId, NI_ID, `food description`) %>%
-          summarise(
-            calculation = paste0(
-              "min(",
-              str_c(calculation, collapse = ", "),
-              ", 1) x Correction Factor \n = ",
-              paste0(ifelse(min(
-                round(value, 2)
-              ) >= 1, 1, min(
-                round(value, 2)
-              ))),
-              " x Correction Factor"
-            )
-          ) %>%
-          ungroup()
-
-        PDCAAS <- PDCAAS %>%
-          select(!calculation) %>%
-          select(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            value,
-            AA,
-            `Food Composition Ref`
-          ) %>%
-          group_by(fdcId,
-                   NI_ID,
-                   `food description`,
-                   Protein,
-                   `Food Composition Ref`) %>%
-          mutate(PDCAAS = min(value)) %>%
-          filter(value == PDCAAS) %>%
-          ungroup() %>%
-          left_join(temp_2) %>%
-          mutate(PDCAAS = ifelse(PDCAAS >= 1, 1, PDCAAS)) %>%
-          select(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            AA,
-            PDCAAS,
-            calculation,
-            `Food Composition Ref`
-          ) %>%
-          rename("Limiting AA" = "AA") %>%
-          separate_longer_delim(NI_ID, delim = ";") %>%
-          mutate(NI_ID = str_trim(NI_ID)) %>%
-          left_join(
-            Protein_Correction %>%
-              select(
-                NI_ID,
-                Food,
-                `Correction Factor  (%)`,
-                Species,
-                `Protein Form`,
-                `Sample Location`,
-                Calculation,
-                `Data Collection Source`
-              ) %>%
-              filter(`Sample Location` == "fecal") %>%
-              mutate(Food = str_remove(Food, ", Average")) %>%
-              group_by(
-                Food,
-                Species,
-                `Protein Form`,
-                `Sample Location`,
-                Calculation,
-                `Data Collection Source`
-              ) %>%
-              summarise(
-                `Correction Factor  (%)` = round(sum(`Correction Factor  (%)`, na.rm = TRUE) /
-                                                   n(), 2),
-                NI_ID = paste0(NI_ID, collapse = "; ")
-              ) %>%
-              separate_longer_delim(NI_ID, delim = "; ") %>%
-              distinct()
-          ) %>%
-          replace_na(list("Data Collection Source" = "Not Available")) %>%
-          mutate(indicator = ifelse(
-            `Data Collection Source` == `Food Composition Ref`,
-            1,
-            ifelse(
-              str_detect(`Food Composition Ref`, "Standard Reference"),
-              2,
-              3
-            )
-          )) %>%
-          filter(!(
-            Calculation == "metabolic availability" &
-              !str_detect(`Food Composition Ref`, "Standard Reference")
-          )) %>%
-          group_by(`food identifier`) %>%
-          mutate(min_indicator = ifelse(
-            `Data Collection Source` == "Not Available",
-            2,
-            min(indicator, na.rm = TRUE)
-          )) %>%
-          ungroup() %>%
-          filter(indicator == min_indicator) %>%
-          select(!indicator) %>%
-          select(!min_indicator) %>%
-          mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
-          group_by(
-            Food,
-            Species,
-            `Protein Form`,
-            `Sample Location`,
-            Calculation,
-            `Data Collection Source`
-          ) %>%
-          mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
-          distinct() %>%
-          mutate(PDCAAS = PDCAAS * ifelse(!is.na(`Correction Factor  (%)`), (
-            as.numeric(`Correction Factor  (%)`) / 100
-          ), 1)) %>%
-          filter(
-            `Protein Form` == "crude protein" |
-              `Limiting AA` == `Protein Form` |
-              (
-                `Limiting AA` == "methionine+cysteine" &
-                  `Protein Form` == "methionine"
-              ) |
-              (
-                `Limiting AA` == "phenylalanine+tyrosine" &
-                  `Protein Form` == "phenylalanine"
-              ) | (
-                `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
-              )
-          ) %>%
-          mutate(PDCAAS = round(PDCAAS, 4)) %>%
-          mutate(calculation = paste0(calculation, " \n = ", PDCAAS)) %>%
-          select(
-            NI_ID,
-            Food,
-            Species,
-            `Sample Location`,
-            `Protein Form`,
-            Calculation,
-            `Correction Factor  (%)`,
-            `Limiting AA`,
-            fdcId,
-            PDCAAS,
-            calculation,
-            `Food Composition Ref`,
-            `Data Collection Source`
-          ) %>%
-          distinct() %>%
-          mutate(`Correction Factor  (%)` = as.character(`Correction Factor  (%)`)) %>%
-          replace_na(
-            list(
-              Calculation = "Not Available",
-              `Sample Location` = "Not Available",
-              `Protein Form` = "Not Available",
-              Species = "Not Available",
-              `Correction Factor  (%)` = "Not Available",
-              `Data Collection Source` = "Not Available"
-            )
-          ) %>%
-          distinct()
-
-
-        rm(temp_2)
-
-        if (input$show_calc == "score_only") {
-          PDCAAS <- PDCAAS %>%
-            select(!calculation)
-        } else{
-          PDCAAS <- PDCAAS %>%
-            select(!PDCAAS) %>%
-            rename("PDCAAS" = "calculation")
-        }
-
-        if (length(input$score) != 1) {
-          PQ_df <- full_join(PQ_df, PDCAAS)
-        } else{
-          PQ_df <- PDCAAS
-        }
-
-
-      }
-
-
-      if (ifelse(length(input$score) != 1,
-                 "DIAAS" %in% input$score,
-                 "DIAAS" == input$score)) {
-        DIAAS <- EAA_composition %>%
-          drop_na(Protein) %>%
-          drop_na(NI_ID) %>%
-          mutate(value = (value) / Protein) %>%
-          mutate(value = value * 1000) %>%
-          left_join(
-            scoring_pattern %>%
-              rename("AA" = "Analyte") %>%
-              filter(`Pattern Name` == input$EAA_rec_DIAAS) %>%
-              filter(Age == input$rec_age_DIAAS) %>%
-              select(AA, Amount)
-          ) %>%
-          mutate(calculation = paste0(round(value, 2), "/", Amount)) %>%
-          mutate(value = value / Amount) %>%
-          select(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            value,
-            AA,
-            calculation,
-            `Food Composition Ref`
-          )
-
-        temp_2 <- DIAAS %>%
-          select(fdcId, NI_ID, `food description`, value, calculation) %>%
-          group_by(fdcId, NI_ID, `food description`) %>%
-          summarise(
-            calculation = paste0(
-              "min(",
-              str_c(calculation, collapse = ", "),
-              ", 1) x Correction Factor \n = ",
-              paste0(ifelse(min(
-                round(value, 2)
-              ) >= 1, 1, min(
-                round(value, 2)
-              ))),
-              " x Correction Factor"
-            )
-          ) %>%
-          ungroup()
-
-        DIAAS <- DIAAS %>%
-          select(!calculation) %>%
-          select(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            value,
-            AA,
-            `Food Composition Ref`
-          ) %>%
-          group_by(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            `Food Composition Ref`
-          ) %>%
-          mutate(DIAAS = min(value)) %>%
-          filter(value == DIAAS) %>%
-          ungroup() %>%
-          left_join(temp_2) %>%
-          select(
-            fdcId,
-            NI_ID,
-            `food identifier`,
-            `food description`,
-            Protein,
-            AA,
-            DIAAS,
-            calculation,
-            `Food Composition Ref`
-          ) %>%
-          rename("Limiting AA" = "AA") %>%
-          separate_longer_delim(NI_ID, delim = ";") %>%
-          mutate(NI_ID = str_trim(NI_ID)) %>%
-          left_join(
-            Protein_Correction %>%
-              select(
-                NI_ID,
-                Food,
-                `Correction Factor  (%)`,
-                Species,
-                `Protein Form`,
-                `Sample Location`,
-                Calculation,
-                `Data Collection Source`
-              ) %>%
-              filter(`Sample Location` == "ileal") %>%
-              mutate(Food = str_remove(Food, ", Average")) %>%
-              group_by(
-                Food,
-                Species,
-                `Protein Form`,
-                `Sample Location`,
-                Calculation,
-                `Data Collection Source`
-              ) %>%
-              summarise(
-                `Correction Factor  (%)` = round(sum(`Correction Factor  (%)`, na.rm = TRUE) /
-                                                   n(), 2),
-                NI_ID = paste0(NI_ID, collapse = "; ")
-              ) %>%
-              separate_longer_delim(NI_ID, delim = "; ") %>%
-              distinct()
-          ) %>%
-          replace_na(list("Data Collection Source" = "Not Available")) %>%
-          mutate(indicator = ifelse(
-            `Data Collection Source` == `Food Composition Ref`,
-            1,
-            ifelse(
-              str_detect(`Food Composition Ref`, "Standard Reference"),
-              2,
-              3
-            )
-          )) %>%
-          filter(!(
-            Calculation == "metabolic availability" &
-              !str_detect(`Food Composition Ref`, "Standard Reference")
-          )) %>%
-          group_by(`food identifier`) %>%
-          mutate(min_indicator = ifelse(
-            `Data Collection Source` == "Not Available",
-            2,
-            min(indicator, na.rm = TRUE)
-          )) %>%
-          ungroup() %>%
-          filter(indicator == min_indicator) %>%
-          select(!indicator) %>%
-          select(!min_indicator) %>%
-          mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
-          group_by(
-            Food,
-            Species,
-            `Protein Form`,
-            `Sample Location`,
-            Calculation,
-            `Data Collection Source`
-          ) %>%
-          mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
-          distinct() %>%
-          mutate(DIAAS = DIAAS * ifelse(!is.na(`Correction Factor  (%)`), (
-            as.numeric(`Correction Factor  (%)`) / 100
-          ), 1)) %>%
-          filter(
-            `Protein Form` == "crude protein" |
-              `Limiting AA` == `Protein Form` |
-              (
-                `Limiting AA` == "methionine+cysteine" &
-                  `Protein Form` == "methionine"
-              ) |
-              (
-                `Limiting AA` == "phenylalanine+tyrosine" &
-                  `Protein Form` == "phenylalanine"
-              ) | (
-                `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
-              )
-          ) %>%
-          mutate(DIAAS = round(DIAAS, 4)) %>%
-          mutate(calculation = paste0(calculation, " \n = ", DIAAS)) %>%
-          select(
-            NI_ID,
-            Food,
-            Species,
-            `Sample Location`,
-            `Protein Form`,
-            Calculation,
-            `Correction Factor  (%)`,
-            `Limiting AA`,
-            fdcId,
-            DIAAS,
-            calculation,
-            `Food Composition Ref`,
-            `Data Collection Source`
-          ) %>%
-          distinct() %>%
-          mutate(`Correction Factor  (%)` = as.character(`Correction Factor  (%)`)) %>%
-          replace_na(
-            list(
-              Calculation = "Not Available",
-              `Sample Location` = "Not Available",
-              `Protein Form` = "Not Available",
-              Species = "Not Available",
-              `Correction Factor  (%)` = "Not Available",
-              `Data Collection Source` = "Not Available"
-            )
-          ) %>%
-          distinct()
-
-
-        rm(temp_2)
-
-        if (input$show_calc == "score_only") {
-          DIAAS <- DIAAS %>%
-            select(!calculation)
-        } else{
-          DIAAS <- DIAAS %>%
-            select(!DIAAS) %>%
-            rename("DIAAS" = "calculation")
-        }
-
-        if (length(input$score) != 1) {
-          PQ_df <- full_join(PQ_df, DIAAS)
-        } else{
-          PQ_df <- DIAAS
-        }
-
-
-      }
-
-      if ("crude protein" %in% input$pq_analyte) {
-        if (!("individual amino acids" %in% input$pq_analyte)) {
-          PQ_df <- PQ_df %>%
-            filter(`Protein Form` == "crude protein")
-        }
-      }
-      if ("individual amino acids" %in% input$pq_analyte) {
-        if (!("crude protein" %in% input$pq_analyte)) {
-          PQ_df <- PQ_df %>%
-            filter(`Protein Form` != "crude protein")
-        }
-      }
-      PQ_df <- PQ_df %>%
-        arrange(Species,
-                Calculation,
-                `Sample Location`,
-                `Protein Form`,
-                Food) %>%
-        filter((`Sample Location` %in% input$pq_sample) |
-                 (
-                   `Sample Location` == "Not Available" &
-                     input$require_bioavail == FALSE
-                 )
-        ) %>%
-        filter(
-          Calculation %in% input$pq_measure |
-            (
-              Calculation == "Not Available" &
-                input$require_bioavail == FALSE
-            )
-        ) %>%
-        filter(
-          Species %in% input$pq_species |
-            (
-              Species == "Not Available" & input$require_bioavail == FALSE
-            )
-        ) %>%
-        rename("Correction Factor Species" = "Species") %>%
-        rename("Correction Factor Protein Form" = "Protein Form") %>%
-        rename("Correction Factor Sample Location" = "Sample Location") %>%
-        rename("Correction Factor Calculation" = "Calculation") %>%
-        rename("Correction Factor Ref" = "Data Collection Source")  %>%
-        mutate(across(where(is.character), ~ gsub("\n", "<br>", .))) %>%
-        relocate(`Correction Factor Ref`, .after = last_col()) %>%
-        relocate(`Food Composition Ref`, .after = last_col()) %>%
-        mutate(
-          `Limiting AA` = ifelse(
-            `Limiting AA` == "methionine+cysteine",
-            "methionine + cysteine",
-            `Limiting AA`
-          )
-        ) %>%
-        mutate(
-          `Limiting AA` = ifelse(
-            `Limiting AA` == "phenylalanine+tyrosine",
-            "phenylalanine + tyrosine",
-            `Limiting AA`
-          )
-        )
-
-
-      if(input$search_tab1 != ""){
-        PQ_df <- PQ_df  %>%
-          filter_all(any_vars(grepl(input$search_tab1, ., ignore.case = TRUE)))
-
-      }
-
-
-      n_cols <- ncol(PQ_df)
-      n_remaining <- n_cols - 6
-
-      sketch <- withTags(table(class = 'display',
-                               thead(
-                                 tr(
-                                   th(rowspan = 2, paste0(colnames(PQ_df)[1])),
-                                   th(rowspan = 2, paste0(colnames(PQ_df)[2])),
-                                   th(colspan = 5, 'Correction Factor'),
-                                   lapply(8:n_cols, function(i)
-                                     th(rowspan = 2, paste0(
-                                       colnames(PQ_df)[i]
-                                     )))
-                                 ),
-                                 tr(lapply(
-                                   c(
-                                     "Species",
-                                     "Sample Location",
-                                     "Protein Form",
-                                     "Calculation",
-                                     "Correction Factor (%)"
-                                   ),
-                                   th
-                                 ))
-                               )))
-
-
-
-      DT::datatable(
-        PQ_df,
-        class = "display cell-border compact",
-        rownames = FALSE,
-        extensions = c('FixedHeader'),
-        container = sketch,
-        options = list(
-          fixedHeader = TRUE,
-          dom = 'ltip',
-          pageLength = 25,
-          lengthMenu = c(15, 25, 50, 75, 100),
-          order = list(
-            list(2, 'asc'),
-            list(3, 'asc'),
-            list(4, 'asc'),
-            list(5, 'asc')
-          ),
-          columnDefs = list(# list(targets = c(1, 2, 9), className = "dt-head-nowrap"),
-            list(
-              targets = c('Correction Factor Ref', 'Food Composition Ref'),
-              render = JS(
-                "function(data, type, row, meta) {",
-                "return type === 'display' && data.length > 100 ?",
-                "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
-                "}"
-              )
-            ))
-        ),
-        escape = FALSE  # Allow HTML rendering
-      ) %>%
-        formatStyle(1:ncol(PQ_df),
-                    'vertical-align' = 'top',
-                    'overflow-wrap' = 'break-word') %>%
-        formatStyle(1, width = '30px') %>%
-        formatStyle(2, width = '120px') %>%
-        formatStyle(3:6, width = '50px') %>%
-        formatStyle(7, width = '90px') %>%
-        formatStyle(8, width = '90px') %>%
-        formatStyle(9:10, width = '40px') %>%
-        formatStyle(11:ncol(PQ_df), width = '80px')
-    }
-  })
-
-  # render table for food mappings
-  output$table_3 <- DT::renderDataTable(server = TRUE, {
-    fdcmp_df <- EAA_composition
-    if(input$search_tab3 != ""){
-      fdcmp_df <- fdcmp_df  %>%
-        filter_all(any_vars(grepl(input$search_tab3, ., ignore.case = TRUE)))
-
-    }
-
-
-    fdcmp_df <- fdcmp_df %>%
-      select(NI_ID,
-             fdcId,
-             `food description`,
-             Protein,
-             AA,
-             value,
-             `Food Composition Ref`) %>%
-      mutate("FDC_ID" = fdcId) %>%
-      select(NI_ID,
-             FDC_ID,
-             `food description`,
-             Protein,
-             AA,
-             value,
-             `Food Composition Ref`) %>%
-      distinct() %>%
-      mutate(AA = factor(
-        AA,
-        levels = c(
-          "histidine",
-          "isoleucine",
-          "leucine",
-          "lysine",
-          "methionine+cysteine",
-          "phenylalanine+tyrosine",
-          "threonine",
-          "tryptophan",
-          "valine"
-        ),
-        labels = c(
-          "His (g/100g)",
-          "Ile (g/100g)",
-          "Leu (g/100g)",
-          "Lys (g/100g)",
-          "Met+Cys (g/100g)",
-          "Phe+Tyr (g/100g)",
-          "Thr (g/100g)",
-          "Trp (g/100g)",
-          "Val (g/100g)"
-        )
-      )) %>%
-      pivot_wider(names_from = "AA", values_from = "value") %>%
-      rename("Protein (g/100g)" = "Protein") %>%
-      rename("Food description" = "food description") %>%
-      distinct() %>%
-      relocate(`Food Composition Ref`, .after = last_col())
-    if (input$show_NI_ID == FALSE) {
-      fdcmp_df <- fdcmp_df %>%
-        select(!NI_ID)
-    }
-
-    DT::datatable(
-      fdcmp_df ,
-      extensions = c('Buttons', 'FixedHeader'),
-      class = "display cell-border compact",
-      rownames = FALSE,
-      options = list(
-        fixedHeader = TRUE,
-        scrollCollapse = TRUE,
-        dom = 'ltip',
-        pageLength = 25,
-        lengthMenu = c(15, 25, 50, 75, 100),
-        columnDefs = list(list(
-          targets = c(ncol(fdcmp_df) - 1),
-          render = JS(
-            "function(data, type, row, meta) {",
-            "return type === 'display' && data.length > 100 ?",
-            "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
-            "}"
-          )
-        ))
-      ),
-      escape = FALSE  # Allow HTML rendering
-    ) %>%
-      formatStyle(1:16,
-                  'vertical-align' = 'top',
-                  'overflow-wrap' = 'break-word') %>%
-      formatStyle((ncol(fdcmp_df) - 10):(ncol(fdcmp_df) - 1), width = '5%') %>%
-      formatStyle(1, width = '5%')
+  output$IAAO_note <- renderUI({
+    div(
+      style = "display: inline-block; background-color: #f0f0f0;
+               padding: 8px 12px; margin-right: 15px; margin-bottom: 10px;
+               font-size: 16px; border-radius: 4px; width: 100%; color: #333;",
+      tags$strong("Note: "),
+      "IAAO correction factors are experimental"
+    )
   })
 
   # Content for downloads
@@ -2199,20 +1238,11 @@ server <- function(input, output, session) {
 
     if (!("EAA-9" %in% input$score |
           "PDCAAS" %in% input$score | "DIAAS" %in% input$score)) {
-      DT::datatable(
-        data.frame(Message = "Please select scores above"),
-        rownames = FALSE,
-        options = list(
-          dom = 't',
-          # hides filter, pagination, etc.
-          ordering = FALSE,
-          paging = FALSE
-        )
-      )
+      PQ_df <- data.frame(Message = "Please select scores above")
     } else {
       if ("EAA-9" %in% input$score) {
         if (input$EAA_rec == "Choose custom recommendations") {
-          scoring_pattern[199, ] <-
+          scoring_pattern[199,] <-
             list(
               "Choose custom recommendations",
               "histidine",
@@ -2223,7 +1253,7 @@ server <- function(input, output, session) {
               NA,
               NA
             )
-          scoring_pattern[200, ] <-
+          scoring_pattern[200,] <-
             list(
               "Choose custom recommendations",
               "leucine",
@@ -2234,7 +1264,7 @@ server <- function(input, output, session) {
               NA,
               NA
             )
-          scoring_pattern[201, ] <-
+          scoring_pattern[201,] <-
             list(
               "Choose custom recommendations",
               "isoleucine",
@@ -2245,7 +1275,7 @@ server <- function(input, output, session) {
               NA,
               NA
             )
-          scoring_pattern[202, ] <-
+          scoring_pattern[202,] <-
             list(
               "Choose custom recommendations",
               "lysine",
@@ -2256,7 +1286,7 @@ server <- function(input, output, session) {
               NA,
               NA
             )
-          scoring_pattern[203, ] <-
+          scoring_pattern[203,] <-
             list(
               "Choose custom recommendations",
               "methionine+cysteine",
@@ -2267,7 +1297,7 @@ server <- function(input, output, session) {
               NA,
               NA
             )
-          scoring_pattern[204, ] <-
+          scoring_pattern[204,] <-
             list(
               "Choose custom recommendations",
               "phenylalanine+tyrosine",
@@ -2278,7 +1308,7 @@ server <- function(input, output, session) {
               NA,
               NA
             )
-          scoring_pattern[205, ] <-
+          scoring_pattern[205,] <-
             list(
               "Choose custom recommendations",
               "threonine",
@@ -2289,7 +1319,7 @@ server <- function(input, output, session) {
               NA,
               NA
             )
-          scoring_pattern[206, ] <-
+          scoring_pattern[206,] <-
             list(
               "Choose custom recommendations",
               "tryptophan",
@@ -2300,7 +1330,7 @@ server <- function(input, output, session) {
               NA,
               NA
             )
-          scoring_pattern[207, ] <-
+          scoring_pattern[207,] <-
             list(
               "Choose custom recommendations",
               "valine",
@@ -3048,9 +2078,11 @@ server <- function(input, output, session) {
         )
 
 
-      if(input$search_tab1 != ""){
+      if (input$search_tab1 != "") {
         PQ_df <- PQ_df  %>%
-          filter_all(any_vars(grepl(input$search_tab1, ., ignore.case = TRUE)))
+          filter_all(any_vars(grepl(
+            input$search_tab1, ., ignore.case = TRUE
+          )))
 
       }
     }
@@ -3059,7 +2091,7 @@ server <- function(input, output, session) {
   data_bv <- reactive({
     correction_factors <- Protein_Correction
 
-    if(input$search_tab2 != ""){
+    if (input$search_tab2 != "") {
       correction_factors <- correction_factors  %>%
         filter_all(any_vars(grepl(input$search_tab2, ., ignore.case = TRUE)))
 
@@ -3086,7 +2118,7 @@ server <- function(input, output, session) {
   })
   data_eaa <- reactive({
     fdcmp_df <- EAA_composition
-    if(input$search_tab3 != ""){
+    if (input$search_tab3 != "") {
       fdcmp_df <- fdcmp_df  %>%
         filter_all(any_vars(grepl(input$search_tab3, ., ignore.case = TRUE)))
 
@@ -3178,6 +2210,1102 @@ server <- function(input, output, session) {
     }
     fdcmp_df
   })
+
+
+  # render table for protein correction factors
+  output$table <- DT::renderDataTable(server = TRUE, {
+    correction_factors <- Protein_Correction
+
+    if (input$search_tab2 != "") {
+      correction_factors <- correction_factors  %>%
+        filter_all(any_vars(grepl(input$search_tab2, ., ignore.case = TRUE)))
+
+    }
+
+    sketch <- withTags(table(class = 'display',
+                             thead(tr(
+                               lapply(colnames(data_bv()), function(col) {
+                                 tooltip <- col_meta$tooltip[match(col, col_meta$col)]
+                                 tooltip <- ifelse(is.na(tooltip), "", tooltip)
+                                 th(title = tooltip, col)
+                               })
+                             ))))
+
+
+    DT::datatable(
+      data_bv(),
+      container = sketch,
+      extensions = c('FixedHeader'),
+      class = "display cell-border compact",
+      rownames = FALSE,
+      options = list(
+        fixedHeader = TRUE,
+        dom = 'ltip',
+        pageLength = 25,
+        lengthMenu = c(25, 50, 75, 100),
+        columnDefs = list(list(
+          targets = c(12, 13),
+          render = JS(
+            "function(data, type, row, meta) {",
+            "return type === 'display' && data.length > 100 ?",
+            "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
+            "}"
+          )
+        ))
+      ),
+      escape = FALSE
+    ) %>%
+      formatStyle(1:14,
+                  'vertical-align' = 'top',
+                  'overflow-wrap' = 'break-word') %>%
+      formatStyle(12:13,
+                  'overflow-wrap' = 'break-word',
+                  'word-break' = 'break-word')
+
+  })
+
+  pq_filter_inputs <- reactive({
+    list(
+      species = input$pq_species,
+      sample = input$pq_sample,
+      analyte = input$pq_analyte,
+      measure = input$pq_measure
+    )
+  })
+
+  debounced_filters <- debounce(pq_filter_inputs, millis = 1000)
+
+
+  # render table for protein quality scores
+  output$table_2 <- DT::renderDataTable(server = TRUE, {
+    PQ_df <- data.frame(NI_ID = character())
+
+    if (!("EAA-9" %in% input$score |
+          "PDCAAS" %in% input$score | "DIAAS" %in% input$score)) {
+      DT::datatable(
+        data.frame(Message = "Please select scores above"),
+        rownames = FALSE,
+        options = list(
+          dom = 't',
+          # hides filter, pagination, etc.
+          ordering = FALSE,
+          paging = FALSE
+        )
+      )
+    } else {
+      if ("EAA-9" %in% input$score) {
+        if (input$EAA_rec == "Choose custom recommendations") {
+          scoring_pattern[199,] <-
+            list(
+              "Choose custom recommendations",
+              "histidine",
+              ifelse(is.numeric(input$hist), input$hist, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+          scoring_pattern[200,] <-
+            list(
+              "Choose custom recommendations",
+              "leucine",
+              ifelse(is.numeric(input$leu), input$leu, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+          scoring_pattern[201,] <-
+            list(
+              "Choose custom recommendations",
+              "isoleucine",
+              ifelse(is.numeric(input$ile), input$ile, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+          scoring_pattern[202,] <-
+            list(
+              "Choose custom recommendations",
+              "lysine",
+              ifelse(is.numeric(input$lys), input$lys, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+          scoring_pattern[203,] <-
+            list(
+              "Choose custom recommendations",
+              "methionine+cysteine",
+              ifelse(is.numeric(input$met_cys), input$met_cys, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+          scoring_pattern[204,] <-
+            list(
+              "Choose custom recommendations",
+              "phenylalanine+tyrosine",
+              ifelse(is.numeric(input$phe_tyr), input$phe_tyr, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+          scoring_pattern[205,] <-
+            list(
+              "Choose custom recommendations",
+              "threonine",
+              ifelse(is.numeric(input$thr), input$thr, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+          scoring_pattern[206,] <-
+            list(
+              "Choose custom recommendations",
+              "tryptophan",
+              ifelse(is.numeric(input$trp), input$trp, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+          scoring_pattern[207,] <-
+            list(
+              "Choose custom recommendations",
+              "valine",
+              ifelse(is.numeric(input$val), input$val, 1),
+              "mg/kg/d",
+              "custom",
+              NA,
+              NA,
+              NA
+            )
+        }
+        if (input$require_bioavail == TRUE) {
+          EAA_composition <- EAA_composition %>%
+            drop_na(NI_ID)
+        }
+
+        if (input$serving_size == "Use standard serving sizes") {
+          EAA_9 <- EAA_composition %>%
+            left_join(
+              portion_sizes %>%
+                select(fdcId, g_weight , portion) %>%
+                mutate(fdcId = as.character(fdcId)) %>%
+                mutate(portion = paste0(portion, " (", g_weight, " g)"))
+            ) %>%
+            mutate(portion = ifelse(is.na(portion), "not provided (100 g)", portion)) %>%
+            mutate(g_weight = ifelse(is.na(g_weight), 100, g_weight)) %>%
+            mutate(value = value * 1000) %>%
+            mutate(value = value * (g_weight / 100))
+        } else{
+          EAA_9 <- EAA_composition %>%
+            mutate(value = value * 1000) %>%
+            mutate(value = value * (input$serving_weight / 100)) %>%
+            mutate(portion = paste0(input$serving_weight, " g"))
+        }
+
+        pattern <- scoring_pattern %>%
+          filter(`Pattern Name` == input$EAA_rec) %>%
+          filter(is.character(input$rec_age) &
+                   Age == input$rec_age | !is.na(Age)) %>%
+          select(AA = Analyte, Amount)
+
+        EAA_9 <- EAA_9 %>%
+          left_join(pattern, by = "AA") %>%
+          mutate(
+            norm_value = Amount * input$weight,
+            calculation = paste0(round(value, 2), "/", round(norm_value, 2)),
+            value = value / norm_value
+          ) %>%
+          select(
+            fdcId,
+            NI_ID,
+            `food identifier`,
+            `food description`,
+            Protein,
+            portion,
+            value,
+            AA,
+            calculation,
+            `Food Composition Ref`
+          )
+
+        min_scores <- EAA_9 %>%
+          group_by(fdcId, NI_ID, `food description`) %>%
+          summarise(
+            calculation = paste0(
+              "min(",
+              str_c(calculation, collapse = ", "),
+              ") x 100 x Correction Factor \n = ",
+              min(round(value, 4)),
+              " x 100 x Correction Factor"
+            ),
+            .groups = "drop"
+          )
+
+        EAA_9 <- EAA_9 %>%
+          select(-calculation) %>%
+          left_join(min_scores, by = c("fdcId", "NI_ID", "food description")) %>%
+          group_by(
+            fdcId,
+            `food identifier`,
+            `food description`,
+            Protein,
+            portion,
+            `Food Composition Ref`
+          ) %>%
+          mutate(`EAA-9` = min(value)) %>%
+          filter(value == `EAA-9`) %>%
+          ungroup() %>%
+          rename("Limiting AA" = "AA") %>%
+          separate_longer_delim(NI_ID, delim = ";") %>%
+          mutate(NI_ID = str_trim(NI_ID)) %>%
+          left_join(
+            Protein_Correction %>%
+              mutate(Food = str_remove(Food, ", Average")) %>%
+              group_by(
+                Food,
+                Species,
+                `Protein Form`,
+                `Sample Location`,
+                Calculation,
+                `Data Collection Source`
+              ) %>%
+              summarise(
+                `Correction Factor  (%)` = round(mean(`Correction Factor  (%)`, na.rm = TRUE), 2),
+                NI_ID = paste(NI_ID, collapse = "; "),
+                .groups = "drop"
+              ) %>%
+              separate_longer_delim(NI_ID, delim = "; ") %>%
+              distinct(),
+            by = "NI_ID"
+          ) %>%
+          replace_na(list(`Data Collection Source` = "Not Available")) %>%
+          mutate(
+            indicator = case_when(
+              `Data Collection Source` == `Food Composition Ref` ~ 1,
+              str_detect(`Food Composition Ref`, "Standard Reference") ~ 2,
+              TRUE ~ 3
+            )
+          ) %>%
+          filter(!(
+            Calculation == "metabolic availability" &
+              !str_detect(`Food Composition Ref`, "Standard Reference")
+          )) %>%
+          group_by(`food identifier`) %>%
+          mutate(min_indicator = ifelse(
+            `Data Collection Source` == "Not Available",
+            2,
+            min(indicator, na.rm = TRUE)
+          )) %>%
+          ungroup() %>%
+          filter(indicator == min_indicator) %>%
+          select(-indicator, -min_indicator) %>%
+          mutate(Food = coalesce(Food, `food description`)) %>%
+          group_by(
+            Food,
+            Species,
+            `Protein Form`,
+            `Sample Location`,
+            Calculation,
+            `Data Collection Source`
+          ) %>%
+          mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
+          distinct() %>%
+          ungroup() %>%
+          mutate(
+            `EAA-9` = round(
+              `EAA-9` * ifelse(
+                is.na(`Correction Factor  (%)`),
+                1,
+                `Correction Factor  (%)` / 100
+              ) * 100,
+              2
+            ),
+            calculation = ifelse(
+              is.na(`Correction Factor  (%)`),
+              str_remove(calculation, " x Correction Factor"),
+              calculation
+            ),
+            calculation = paste0(calculation, " \n = ", `EAA-9`, "%")
+          ) %>%
+          filter(
+            ifelse(
+              !is.na(`Protein Form`),
+              `Protein Form` == "crude protein" |
+                `Limiting AA` == `Protein Form` |
+                (
+                  `Limiting AA` == "methionine+cysteine" &
+                    `Protein Form` == "methionine"
+                ) |
+                (
+                  `Limiting AA` == "phenylalanine+tyrosine" &
+                    `Protein Form` == "phenylalanine"
+                ) |
+                (
+                  `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
+                ),
+              !is.na(`EAA-9`)
+            )
+          ) %>%
+          select(
+            NI_ID,
+            Food,
+            Species,
+            `Sample Location`,
+            `Protein Form`,
+            Calculation,
+            `Correction Factor  (%)`,
+            `Limiting AA`,
+            fdcId,
+            portion,
+            `EAA-9`,
+            calculation,
+            `Food Composition Ref`,
+            `Data Collection Source`
+          ) %>%
+          rename("serving size" = "portion", "EAA-9 (%)" = "EAA-9") %>%
+          mutate(`Correction Factor  (%)` = as.character(`Correction Factor  (%)`)) %>%
+          replace_na(
+            list(
+              NI_ID = "Not Available",
+              Calculation = "Not Available",
+              `Sample Location` = "Not Available",
+              `Protein Form` = "Not Available",
+              Species = "Not Available",
+              `Correction Factor  (%)` = "Not Available",
+              `Data Collection Source` = "Not Available"
+            )
+          ) %>%
+          distinct()
+
+        # Optional: final score/calc switch
+        if (input$show_calc == "score_only") {
+          EAA_9 <- EAA_9 %>% select(-calculation)
+        } else {
+          EAA_9 <-
+            EAA_9 %>% select(-`EAA-9 (%)`) %>% rename("EAA-9 (%)" = "calculation")
+        }
+
+        if (length(input$score) != 1) {
+          PQ_df <- full_join(PQ_df, EAA_9)
+        } else {
+          PQ_df <- EAA_9
+        }
+
+
+      }
+
+      if (ifelse(length(input$score) != 1,
+                 "PDCAAS" %in% input$score,
+                 "PDCAAS" == input$score)) {
+        PDCAAS <- EAA_composition %>%
+          drop_na(Protein) %>%
+          drop_na(NI_ID) %>%
+          mutate(value = (value) / Protein) %>%
+          mutate(value = value * 1000) %>%
+          left_join(
+            scoring_pattern %>%
+              rename("AA" = "Analyte") %>%
+              filter(`Pattern Name` == input$EAA_rec_PDCAAS) %>%
+              filter(Age == input$rec_age_PDCAAS) %>%
+              select(AA, Amount)
+          ) %>%
+          mutate(calculation = paste0(round(value, 2), "/", Amount)) %>%
+          mutate(value = value / Amount) %>%
+          select(
+            fdcId,
+            NI_ID,
+            `food identifier`,
+            `food description`,
+            Protein,
+            value,
+            AA,
+            calculation,
+            `Food Composition Ref`
+          )
+
+        temp_2 <- PDCAAS %>%
+          select(fdcId, NI_ID, `food description`, value, calculation) %>%
+          group_by(fdcId, NI_ID, `food description`) %>%
+          summarise(
+            calculation = paste0(
+              "min(",
+              str_c(calculation, collapse = ", "),
+              ", 1) x Correction Factor \n = ",
+              paste0(ifelse(min(
+                round(value, 2)
+              ) >= 1, 1, min(
+                round(value, 2)
+              ))),
+              " x Correction Factor"
+            )
+          ) %>%
+          ungroup()
+
+        PDCAAS <- PDCAAS %>%
+          select(!calculation) %>%
+          select(
+            fdcId,
+            NI_ID,
+            `food identifier`,
+            `food description`,
+            Protein,
+            value,
+            AA,
+            `Food Composition Ref`
+          ) %>%
+          group_by(fdcId,
+                   NI_ID,
+                   `food description`,
+                   Protein,
+                   `Food Composition Ref`) %>%
+          mutate(PDCAAS = min(value)) %>%
+          filter(value == PDCAAS) %>%
+          ungroup() %>%
+          left_join(temp_2) %>%
+          mutate(PDCAAS = ifelse(PDCAAS >= 1, 1, PDCAAS)) %>%
+          select(
+            fdcId,
+            NI_ID,
+            `food identifier`,
+            `food description`,
+            Protein,
+            AA,
+            PDCAAS,
+            calculation,
+            `Food Composition Ref`
+          ) %>%
+          rename("Limiting AA" = "AA") %>%
+          separate_longer_delim(NI_ID, delim = ";") %>%
+          mutate(NI_ID = str_trim(NI_ID)) %>%
+          left_join(
+            Protein_Correction %>%
+              select(
+                NI_ID,
+                Food,
+                `Correction Factor  (%)`,
+                Species,
+                `Protein Form`,
+                `Sample Location`,
+                Calculation,
+                `Data Collection Source`
+              ) %>%
+              filter(`Sample Location` == "fecal") %>%
+              mutate(Food = str_remove(Food, ", Average")) %>%
+              group_by(
+                Food,
+                Species,
+                `Protein Form`,
+                `Sample Location`,
+                Calculation,
+                `Data Collection Source`
+              ) %>%
+              summarise(
+                `Correction Factor  (%)` = round(sum(`Correction Factor  (%)`, na.rm = TRUE) /
+                                                   n(), 2),
+                NI_ID = paste0(NI_ID, collapse = "; ")
+              ) %>%
+              separate_longer_delim(NI_ID, delim = "; ") %>%
+              distinct()
+          ) %>%
+          replace_na(list("Data Collection Source" = "Not Available")) %>%
+          mutate(indicator = ifelse(
+            `Data Collection Source` == `Food Composition Ref`,
+            1,
+            ifelse(
+              str_detect(`Food Composition Ref`, "Standard Reference"),
+              2,
+              3
+            )
+          )) %>%
+          filter(!(
+            Calculation == "metabolic availability" &
+              !str_detect(`Food Composition Ref`, "Standard Reference")
+          )) %>%
+          group_by(`food identifier`) %>%
+          mutate(min_indicator = ifelse(
+            `Data Collection Source` == "Not Available",
+            2,
+            min(indicator, na.rm = TRUE)
+          )) %>%
+          ungroup() %>%
+          filter(indicator == min_indicator) %>%
+          select(!indicator) %>%
+          select(!min_indicator) %>%
+          mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
+          group_by(
+            Food,
+            Species,
+            `Protein Form`,
+            `Sample Location`,
+            Calculation,
+            `Data Collection Source`
+          ) %>%
+          mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
+          distinct() %>%
+          mutate(PDCAAS = PDCAAS * ifelse(!is.na(`Correction Factor  (%)`), (
+            as.numeric(`Correction Factor  (%)`) / 100
+          ), 1)) %>%
+          filter(
+            `Protein Form` == "crude protein" |
+              `Limiting AA` == `Protein Form` |
+              (
+                `Limiting AA` == "methionine+cysteine" &
+                  `Protein Form` == "methionine"
+              ) |
+              (
+                `Limiting AA` == "phenylalanine+tyrosine" &
+                  `Protein Form` == "phenylalanine"
+              ) | (
+                `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
+              )
+          ) %>%
+          mutate(PDCAAS = round(PDCAAS, 4)) %>%
+          mutate(calculation = paste0(calculation, " \n = ", PDCAAS)) %>%
+          select(
+            NI_ID,
+            Food,
+            Species,
+            `Sample Location`,
+            `Protein Form`,
+            Calculation,
+            `Correction Factor  (%)`,
+            `Limiting AA`,
+            fdcId,
+            PDCAAS,
+            calculation,
+            `Food Composition Ref`,
+            `Data Collection Source`
+          ) %>%
+          distinct() %>%
+          mutate(`Correction Factor  (%)` = as.character(`Correction Factor  (%)`)) %>%
+          replace_na(
+            list(
+              Calculation = "Not Available",
+              `Sample Location` = "Not Available",
+              `Protein Form` = "Not Available",
+              Species = "Not Available",
+              `Correction Factor  (%)` = "Not Available",
+              `Data Collection Source` = "Not Available"
+            )
+          ) %>%
+          distinct()
+
+
+        rm(temp_2)
+
+        if (input$show_calc == "score_only") {
+          PDCAAS <- PDCAAS %>%
+            select(!calculation)
+        } else{
+          PDCAAS <- PDCAAS %>%
+            select(!PDCAAS) %>%
+            rename("PDCAAS" = "calculation")
+        }
+
+        if (length(input$score) != 1) {
+          PQ_df <- full_join(PQ_df, PDCAAS)
+        } else{
+          PQ_df <- PDCAAS
+        }
+
+
+      }
+
+
+      if (ifelse(length(input$score) != 1,
+                 "DIAAS" %in% input$score,
+                 "DIAAS" == input$score)) {
+        DIAAS <- EAA_composition %>%
+          drop_na(Protein) %>%
+          drop_na(NI_ID) %>%
+          mutate(value = (value) / Protein) %>%
+          mutate(value = value * 1000) %>%
+          left_join(
+            scoring_pattern %>%
+              rename("AA" = "Analyte") %>%
+              filter(`Pattern Name` == input$EAA_rec_DIAAS) %>%
+              filter(Age == input$rec_age_DIAAS) %>%
+              select(AA, Amount)
+          ) %>%
+          mutate(calculation = paste0(round(value, 2), "/", Amount)) %>%
+          mutate(value = value / Amount) %>%
+          select(
+            fdcId,
+            NI_ID,
+            `food identifier`,
+            `food description`,
+            Protein,
+            value,
+            AA,
+            calculation,
+            `Food Composition Ref`
+          )
+
+        temp_2 <- DIAAS %>%
+          select(fdcId, NI_ID, `food description`, value, calculation) %>%
+          group_by(fdcId, NI_ID, `food description`) %>%
+          summarise(
+            calculation = paste0(
+              "min(",
+              str_c(calculation, collapse = ", "),
+              ", 1) x Correction Factor \n = ",
+              paste0(ifelse(min(
+                round(value, 2)
+              ) >= 1, 1, min(
+                round(value, 2)
+              ))),
+              " x Correction Factor"
+            )
+          ) %>%
+          ungroup()
+
+        DIAAS <- DIAAS %>%
+          select(!calculation) %>%
+          select(
+            fdcId,
+            NI_ID,
+            `food identifier`,
+            `food description`,
+            Protein,
+            value,
+            AA,
+            `Food Composition Ref`
+          ) %>%
+          group_by(
+            fdcId,
+            NI_ID,
+            `food identifier`,
+            `food description`,
+            Protein,
+            `Food Composition Ref`
+          ) %>%
+          mutate(DIAAS = min(value)) %>%
+          filter(value == DIAAS) %>%
+          ungroup() %>%
+          left_join(temp_2) %>%
+          select(
+            fdcId,
+            NI_ID,
+            `food identifier`,
+            `food description`,
+            Protein,
+            AA,
+            DIAAS,
+            calculation,
+            `Food Composition Ref`
+          ) %>%
+          rename("Limiting AA" = "AA") %>%
+          separate_longer_delim(NI_ID, delim = ";") %>%
+          mutate(NI_ID = str_trim(NI_ID)) %>%
+          left_join(
+            Protein_Correction %>%
+              select(
+                NI_ID,
+                Food,
+                `Correction Factor  (%)`,
+                Species,
+                `Protein Form`,
+                `Sample Location`,
+                Calculation,
+                `Data Collection Source`
+              ) %>%
+              filter(`Sample Location` == "ileal") %>%
+              mutate(Food = str_remove(Food, ", Average")) %>%
+              group_by(
+                Food,
+                Species,
+                `Protein Form`,
+                `Sample Location`,
+                Calculation,
+                `Data Collection Source`
+              ) %>%
+              summarise(
+                `Correction Factor  (%)` = round(sum(`Correction Factor  (%)`, na.rm = TRUE) /
+                                                   n(), 2),
+                NI_ID = paste0(NI_ID, collapse = "; ")
+              ) %>%
+              separate_longer_delim(NI_ID, delim = "; ") %>%
+              distinct()
+          ) %>%
+          replace_na(list("Data Collection Source" = "Not Available")) %>%
+          mutate(indicator = ifelse(
+            `Data Collection Source` == `Food Composition Ref`,
+            1,
+            ifelse(
+              str_detect(`Food Composition Ref`, "Standard Reference"),
+              2,
+              3
+            )
+          )) %>%
+          filter(!(
+            Calculation == "metabolic availability" &
+              !str_detect(`Food Composition Ref`, "Standard Reference")
+          )) %>%
+          group_by(`food identifier`) %>%
+          mutate(min_indicator = ifelse(
+            `Data Collection Source` == "Not Available",
+            2,
+            min(indicator, na.rm = TRUE)
+          )) %>%
+          ungroup() %>%
+          filter(indicator == min_indicator) %>%
+          select(!indicator) %>%
+          select(!min_indicator) %>%
+          mutate(Food = ifelse(is.na(Food), `food description`, Food)) %>%
+          group_by(
+            Food,
+            Species,
+            `Protein Form`,
+            `Sample Location`,
+            Calculation,
+            `Data Collection Source`
+          ) %>%
+          mutate(NI_ID = paste0(NI_ID, collapse = "; ")) %>%
+          distinct() %>%
+          mutate(DIAAS = DIAAS * ifelse(!is.na(`Correction Factor  (%)`), (
+            as.numeric(`Correction Factor  (%)`) / 100
+          ), 1)) %>%
+          filter(
+            `Protein Form` == "crude protein" |
+              `Limiting AA` == `Protein Form` |
+              (
+                `Limiting AA` == "methionine+cysteine" &
+                  `Protein Form` == "methionine"
+              ) |
+              (
+                `Limiting AA` == "phenylalanine+tyrosine" &
+                  `Protein Form` == "phenylalanine"
+              ) | (
+                `Limiting AA` == "lysine" & `Protein Form` == "reactive lysine"
+              )
+          ) %>%
+          mutate(DIAAS = round(DIAAS, 4)) %>%
+          mutate(calculation = paste0(calculation, " \n = ", DIAAS)) %>%
+          select(
+            NI_ID,
+            Food,
+            Species,
+            `Sample Location`,
+            `Protein Form`,
+            Calculation,
+            `Correction Factor  (%)`,
+            `Limiting AA`,
+            fdcId,
+            DIAAS,
+            calculation,
+            `Food Composition Ref`,
+            `Data Collection Source`
+          ) %>%
+          distinct() %>%
+          mutate(`Correction Factor  (%)` = as.character(`Correction Factor  (%)`)) %>%
+          replace_na(
+            list(
+              Calculation = "Not Available",
+              `Sample Location` = "Not Available",
+              `Protein Form` = "Not Available",
+              Species = "Not Available",
+              `Correction Factor  (%)` = "Not Available",
+              `Data Collection Source` = "Not Available"
+            )
+          ) %>%
+          distinct()
+
+
+        rm(temp_2)
+
+        if (input$show_calc == "score_only") {
+          DIAAS <- DIAAS %>%
+            select(!calculation)
+        } else{
+          DIAAS <- DIAAS %>%
+            select(!DIAAS) %>%
+            rename("DIAAS" = "calculation")
+        }
+
+        if (length(input$score) != 1) {
+          PQ_df <- full_join(PQ_df, DIAAS)
+        } else{
+          PQ_df <- DIAAS
+        }
+
+
+      }
+
+      if ("crude protein" %in% debounced_filters()$analyte) {
+        if (!("individual amino acids" %in% debounced_filters()$analyte)) {
+          PQ_df <- PQ_df %>%
+            filter(`Protein Form` == "crude protein")
+        }
+      }
+      if ("individual amino acids" %in% debounced_filters()$analyte) {
+        if (!("crude protein" %in% debounced_filters()$analyte)) {
+          PQ_df <- PQ_df %>%
+            filter(`Protein Form` != "crude protein")
+        }
+      }
+      PQ_df <- PQ_df %>%
+        arrange(Species,
+                Calculation,
+                `Sample Location`,
+                `Protein Form`,
+                Food) %>%
+        filter((`Sample Location` %in% debounced_filters()$sample) |
+                 (
+                   `Sample Location` == "Not Available" &
+                     input$require_bioavail == FALSE
+                 )
+        ) %>%
+        filter(
+          Calculation %in% debounced_filters()$measure |
+            (
+              Calculation == "Not Available" &
+                input$require_bioavail == FALSE
+            )
+        ) %>%
+        filter(
+          Species %in% debounced_filters()$species |
+            (
+              Species == "Not Available" & input$require_bioavail == FALSE
+            )
+        ) %>%
+        rename("Correction Factor Species" = "Species") %>%
+        rename("Correction Factor Protein Form" = "Protein Form") %>%
+        rename("Correction Factor Sample Location" = "Sample Location") %>%
+        rename("Correction Factor Calculation" = "Calculation") %>%
+        rename("Correction Factor Ref" = "Data Collection Source")  %>%
+        mutate(across(where(is.character), ~ gsub("\n", "<br>", .))) %>%
+        relocate(`Correction Factor Ref`, .after = last_col()) %>%
+        relocate(`Food Composition Ref`, .after = last_col()) %>%
+        mutate(
+          `Limiting AA` = ifelse(
+            `Limiting AA` == "methionine+cysteine",
+            "methionine + cysteine",
+            `Limiting AA`
+          )
+        ) %>%
+        mutate(
+          `Limiting AA` = ifelse(
+            `Limiting AA` == "phenylalanine+tyrosine",
+            "phenylalanine + tyrosine",
+            `Limiting AA`
+          )
+        )
+
+
+      if (input$search_tab1 != "") {
+        PQ_df <- PQ_df  %>%
+          filter_all(any_vars(grepl(
+            input$search_tab1, ., ignore.case = TRUE
+          )))
+
+      }
+
+
+      n_cols <- ncol(PQ_df)
+      n_remaining <- n_cols - 6
+
+      get_tooltip_label <- function(col_label) {
+        tooltip <- col_meta$tooltip[match(col_label, col_meta$col)]
+        tooltip <- ifelse(is.na(tooltip), "", tooltip)
+        HTML(sprintf('<span title="%s">%s</span>', tooltip, col_label))
+      }
+
+      sketch <- withTags(table(class = 'display',
+                               thead(
+                                 tr(
+                                   th(rowspan = 2, get_tooltip_label(colnames(PQ_df)[1])),
+                                   th(rowspan = 2, get_tooltip_label(colnames(PQ_df)[2])),
+                                   th(colspan = 5, get_tooltip_label("Correction Factor")),
+                                   lapply(8:n_cols, function(i)
+                                     th(
+                                       rowspan = 2, get_tooltip_label(colnames(PQ_df)[i])
+                                     ))
+                                 ),
+                                 tr(lapply(c(
+                                   "Species",
+                                   "Sample Location",
+                                   "Protein Form",
+                                   "Calculation",
+                                   "Correction Factor (%)"
+                                 ),
+                                 function(label)
+                                   th(get_tooltip_label(label))))
+                               )))
+
+
+
+      DT::datatable(
+        PQ_df %>% arrange(NI_ID, Food),
+        class = "display cell-border compact",
+        rownames = FALSE,
+        extensions = c('FixedHeader'),
+        container = sketch,
+        options = list(
+          fixedHeader = TRUE,
+          dom = 'ltip',
+          pageLength = 25,
+          lengthMenu = c(15, 25, 50, 75, 100),
+          order = list(
+            list(2, 'asc'),
+            list(3, 'asc'),
+            list(4, 'asc'),
+            list(5, 'asc')
+          ),
+          columnDefs = list(# list(targets = c(1, 2, 9), className = "dt-head-nowrap"),
+            list(
+              targets = c('Correction Factor Ref', 'Food Composition Ref'),
+              render = JS(
+                "function(data, type, row, meta) {",
+                "return type === 'display' && data.length > 100 ?",
+                "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
+                "}"
+              )
+            ))
+        ),
+        escape = FALSE  # Allow HTML rendering
+      ) %>%
+        formatStyle(1:ncol(PQ_df),
+                    'vertical-align' = 'top',
+                    'overflow-wrap' = 'break-word') %>%
+        formatStyle(1, width = '30px') %>%
+        formatStyle(2, width = '120px') %>%
+        formatStyle(3:6, width = '50px') %>%
+        formatStyle(7, width = '90px') %>%
+        formatStyle(8, width = '90px') %>%
+        formatStyle(9:10, width = '40px') %>%
+        formatStyle(11:ncol(PQ_df), width = '80px')
+    }
+  })
+
+  # render table for food mappings
+  output$table_3 <- DT::renderDataTable(server = TRUE, {
+    fdcmp_df <- EAA_composition
+    if (input$search_tab3 != "") {
+      fdcmp_df <- fdcmp_df  %>%
+        filter_all(any_vars(grepl(input$search_tab3, ., ignore.case = TRUE)))
+
+    }
+
+
+    fdcmp_df <- fdcmp_df %>%
+      select(NI_ID,
+             fdcId,
+             `food description`,
+             Protein,
+             AA,
+             value,
+             `Food Composition Ref`) %>%
+      mutate("FDC_ID" = fdcId) %>%
+      select(NI_ID,
+             FDC_ID,
+             `food description`,
+             Protein,
+             AA,
+             value,
+             `Food Composition Ref`) %>%
+      distinct() %>%
+      mutate(AA = factor(
+        AA,
+        levels = c(
+          "histidine",
+          "isoleucine",
+          "leucine",
+          "lysine",
+          "methionine+cysteine",
+          "phenylalanine+tyrosine",
+          "threonine",
+          "tryptophan",
+          "valine"
+        ),
+        labels = c(
+          "His (g/100g)",
+          "Ile (g/100g)",
+          "Leu (g/100g)",
+          "Lys (g/100g)",
+          "Met+Cys (g/100g)",
+          "Phe+Tyr (g/100g)",
+          "Thr (g/100g)",
+          "Trp (g/100g)",
+          "Val (g/100g)"
+        )
+      )) %>%
+      pivot_wider(names_from = "AA", values_from = "value") %>%
+      rename("Protein (g/100g)" = "Protein") %>%
+      rename("Food description" = "food description") %>%
+      distinct() %>%
+      relocate(`Food Composition Ref`, .after = last_col())
+    if (input$show_NI_ID == FALSE) {
+      fdcmp_df <- fdcmp_df %>%
+        select(!NI_ID)
+    }
+
+    # Create sketch with tooltips
+    sketch <- withTags(table(class = 'display',
+                             thead(tr(
+                               lapply(colnames(fdcmp_df), function(col) {
+                                 tooltip <- col_meta$tooltip[match(col, col_meta$col)]
+                                 tooltip <- ifelse(is.na(tooltip), "", tooltip)
+                                 th(title = tooltip, col)  # preserve raw column name
+                               })
+                             ))))
+
+
+    # Build the table
+    DT::datatable(
+      fdcmp_df,
+      container = sketch,
+      extensions = c('Buttons', 'FixedHeader'),
+      class = "display cell-border compact",
+      rownames = FALSE,
+      options = list(
+        fixedHeader = TRUE,
+        scrollCollapse = TRUE,
+        dom = 'ltip',
+        pageLength = 25,
+        lengthMenu = c(15, 25, 50, 75, 100),
+        columnDefs = list(list(
+          targets = c(ncol(fdcmp_df) - 1),
+          render = JS(
+            "function(data, type, row, meta) {",
+            "return type === 'display' && data.length > 100 ?",
+            "'<span title=\"' + data + '\">' + data.substr(0, 100) + '...</span>' : data;",
+            "}"
+          )
+        ))
+      ),
+      escape = FALSE  # Allow rendering of truncation in columnDefs
+    ) %>%
+      formatStyle(
+        columns = 1:16,
+        `vertical-align` = 'top',
+        `overflow-wrap` = 'break-word'
+      ) %>%
+      formatStyle(columns = seq(ncol(fdcmp_df) - 10, ncol(fdcmp_df) - 1),
+                  width = '5%') %>%
+      formatStyle(columns = 1,
+                  width = '5%')
+
+
+  })
+
+
 
   # CSV Download Handler
   output$download_csv_PQ <- downloadHandler(
