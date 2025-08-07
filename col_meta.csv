@@ -1,7 +1,7 @@
 col,tooltip
 Analysis method(s),"Name of the analysis method(s), technique(s), or assay(s) used to measure bioavailability, as specified in the source the data was collected from"
 Calculation,The protein or amino acid for which correction factor coefficient is provided
-Correction Factor  (%),"Value of the associated correction factor measure, expressed as a percentage"
+Correction Factor (%),"Value of the associated correction factor measure, expressed as a percentage"
 Correction Factor Calculation,"The name of the correction factor (i.e. apparent digestibility, metabolic availability, etc...)
 
 Defined as “Calculation” in the Correction Factors table"
@@ -47,7 +47,7 @@ Protein (g),Amount of protein (in grams) from the applicable food ingested (in t
 Protein (g/100g),Grams of protein per 100g of food
 Protein Form,"The name of the correction factor (i.e. apparent digestibility, metabolic availability, etc...)"
 Sample Location,"The type or location of sample collected for analysis (e.g. ileal, fecal, etc...)"
-serving size (if applicable),Serving size of food used to calculate EAA-9 score
+serving size,Serving size of food used to calculate EAA-9 score
 Species,Target species of correction factor analysis
 Thr (g/100g),Grams of threonine per 100g of food
 Trp (g/100g),Grams of tryptophan per 100g of food
